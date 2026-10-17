@@ -1,6 +1,24 @@
 {
   "properties": [
     {
+      "name": "app.time-zone",
+      "type": "java.lang.String",
+      "defaultValue": "",
+      "description": "IANA zone of the application clock, schedule and monitoring defaults, console timestamps and the zone named in prompts. Empty uses the machine's zone. Applied while the environment is prepared; the JVM default zone is set to match."
+    },
+    {
+      "name": "agent.local-account.slack-workspace-id",
+      "type": "java.lang.String",
+      "defaultValue": "",
+      "description": "Slack workspace ID of the installation's owner, so the console and that person's Slack messages share one account. Blank with a blank user ID selects the console-only account. Set both or neither."
+    },
+    {
+      "name": "agent.local-account.slack-user-id",
+      "type": "java.lang.String",
+      "defaultValue": "",
+      "description": "Slack user ID of the installation's owner; see agent.local-account.slack-workspace-id."
+    },
+    {
       "name": "agent.concurrency.max-active-roots",
       "type": "java.lang.Integer",
       "defaultValue": 4,
@@ -53,132 +71,6 @@
       "type": "java.lang.String",
       "defaultValue": "docker",
       "description": "Operator-owned Docker CLI executable. Resource limits are fixed: 1 active sandbox, 4 queued, shared task deadline, 1 CPU, 512 MiB memory, 64 processes, 128 MiB writable storage, 64 KiB code and each output stream, 10 input/output files, 10 MiB per exported file and 25 MiB total inputs/exports."
-    },
-    {
-      "name": "quickbooks.enabled",
-      "type": "java.lang.Boolean",
-      "defaultValue": false,
-      "description": "Enable curated QuickBooks tools and operator OAuth connection; no startup provider calls."
-    },
-    {
-      "name": "quickbooks.client-id",
-      "type": "java.lang.String",
-      "defaultValue": "",
-      "description": "Intuit OAuth app client ID for the explicitly selected environment."
-    },
-    {
-      "name": "quickbooks.client-secret",
-      "type": "java.lang.String",
-      "defaultValue": "",
-      "description": "Secret Intuit client credential; only private server configuration."
-    },
-    {
-      "name": "quickbooks.environment",
-      "type": "java.lang.String",
-      "defaultValue": "sandbox",
-      "description": "sandbox or production; credentials and connection generations are environment-bound."
-    },
-    {
-      "name": "quickbooks.redirect-uri",
-      "type": "java.lang.String",
-      "defaultValue": "",
-      "description": "Exact Intuit-registered callback URI. Sandbox supports localhost HTTP; production needs a separately hosted public HTTPS landing page."
-    },
-    {
-      "name": "quickbooks.key",
-      "type": "java.lang.String",
-      "defaultValue": "",
-      "description": "Secret canonical Base64 encryption key for exactly 32 random bytes, separate from other integrations."
-    },
-    {
-      "name": "quickbooks.key-id",
-      "type": "java.lang.String",
-      "defaultValue": "primary",
-      "description": "Active encryption key ID; retain previous keys to decrypt older connection records."
-    },
-    {
-      "name": "quickbooks.previous-keys",
-      "type": "java.lang.String",
-      "defaultValue": "",
-      "description": "Secret strict JSON map of previous encryption key IDs to Base64 keys."
-    },
-    {
-      "name": "quickbooks.request-timeout",
-      "type": "java.time.Duration",
-      "defaultValue": "20s",
-      "description": "Standalone OAuth and MCP request deadline, 1 to 60 seconds. Task token refresh and MCP requests inherit the remaining task deadline."
-    },
-    {
-      "name": "quickbooks.read-enabled",
-      "type": "java.lang.Boolean",
-      "defaultValue": true,
-      "description": "Java allow/deny capability for curated reads; does not restrict the OAuth accounting scope."
-    },
-    {
-      "name": "quickbooks.write-enabled",
-      "type": "java.lang.Boolean",
-      "defaultValue": true,
-      "description": "Java allow/deny capability for curated writes; disabled writes never dispatch. No per-call approval."
-    },
-    {
-      "name": "quickbooks.node-executable",
-      "type": "java.lang.String",
-      "defaultValue": "node",
-      "description": "Operator-owned Node executable; never model-selectable."
-    },
-    {
-      "name": "quickbooks.runtime-directory",
-      "type": "java.lang.String",
-      "defaultValue": "./runtime/quickbooks-runtime",
-      "description": "Installed pinned bridge directory including its locked node_modules; no runtime installation."
-    },
-    {
-      "name": "quickbooks.maximum-response-bytes",
-      "type": "java.lang.Integer",
-      "defaultValue": 1048576,
-      "description": "Java response budget, 16384 to 4194304. Bridge additionally caps API bodies at 1 MiB and results at 240000 characters; larger data fails explicitly."
-    },
-    {
-      "name": "outlook.enabled",
-      "type": "java.lang.Boolean",
-      "defaultValue": false,
-      "description": "Enable the dedicated delegated Mail.Read Inbox integration. No background mail polling."
-    },
-    {
-      "name": "outlook.client-id",
-      "type": "java.lang.String",
-      "defaultValue": "",
-      "description": "Dedicated Microsoft public-client app registration UUID; never requests .default or application permissions."
-    },
-    {
-      "name": "outlook.tenant",
-      "type": "java.lang.String",
-      "defaultValue": "common",
-      "description": "Microsoft authority tenant: common, consumers, organizations or tenant UUID."
-    },
-    {
-      "name": "outlook.key",
-      "type": "java.lang.String",
-      "defaultValue": "",
-      "description": "Secret canonical padded Base64 key for exactly 32 random bytes, dedicated to OAuth record encryption."
-    },
-    {
-      "name": "outlook.key-id",
-      "type": "java.lang.String",
-      "defaultValue": "primary",
-      "description": "Active OAuth encryption key identifier: 1–64 ASCII letters, digits, underscore or hyphen."
-    },
-    {
-      "name": "outlook.previous-keys",
-      "type": "java.lang.String",
-      "defaultValue": "",
-      "description": "Secret strict JSON object containing up to 15 previous OAuth encryption keys by ID, at most 65536 characters."
-    },
-    {
-      "name": "outlook.request-timeout",
-      "type": "java.time.Duration",
-      "defaultValue": "20s",
-      "description": "Standalone Microsoft device authorization/token exchange timeout from 1 to 60 seconds. Standalone mail reads use 20 seconds; task token refresh and reads inherit the remaining task deadline."
     },
     {
       "name": "agent.secrets.enabled",
@@ -487,12 +379,6 @@
       "defaultValue": 2097152
     },
     {
-      "name": "opportunities.research.description-cache-retention",
-      "type": "java.time.Duration",
-      "description": "TTL retention for immutable public browser-description sources; execution-owned captured evidence has separate lifetime.",
-      "defaultValue": "168h"
-    },
-    {
       "name": "agent.research.enabled",
       "type": "java.lang.Boolean",
       "description": "Register execution-owned research and report tools; stored catalog tools remain available independently.",
@@ -619,7 +505,7 @@
     {
       "name": "agent.research.files.pdftotext-command",
       "type": "java.lang.String",
-      "description": "Installed Poppler pdftotext executable name or absolute path for bounded text-layer extraction (opportunity attachment summaries on a provider without native document input); never a shell command line.",
+      "description": "Installed Poppler pdftotext executable name or absolute path for bounded text-layer extraction of PDF documents on providers without native document input.",
       "defaultValue": "pdftotext"
     },
     {
@@ -651,54 +537,6 @@
       "type": "java.time.Duration",
       "description": "Standalone file preprocessing and inference deadline, at least one second. Task calls inherit the remaining task deadline.",
       "defaultValue": "90s"
-    },
-    {
-      "name": "opportunities.research.descriptions-enabled",
-      "type": "java.lang.Boolean",
-      "description": "Permit rendered descriptions from stored opportunity links through the isolated browser. Requires enabled browser; task evidence also requires research tools, while inline summaries use default inference. No API key or API fallback.",
-      "defaultValue": true
-    },
-    {
-      "name": "opportunities.research.max-requests-per-task",
-      "type": "java.lang.Integer",
-      "description": "Durable maximum browser page retrieval attempts per task, including failures; individual redirects and subresources are not counted.",
-      "defaultValue": 24
-    },
-    {
-      "name": "opportunities.research.task-request-window",
-      "type": "java.time.Duration",
-      "description": "Durable fixed elapsed window from the first reserved browser description page attempt; survives restart.",
-      "defaultValue": "2m"
-    },
-    {
-      "name": "opportunities.research.max-description-chars",
-      "type": "java.lang.Integer",
-      "description": "Maximum rendered description text characters per immutable browser source, including below-viewport content; task tools paginate the source within their separate output limits. Inline summaries use the smaller of this value and 128000 characters. Capture coverage and truncation remain explicit.",
-      "defaultValue": 500000
-    },
-    {
-      "name": "opportunities.research.description-cache-ttl",
-      "type": "java.time.Duration",
-      "description": "Freshness period for unpinned browser-description source reuse. Legacy API sources are excluded from new unpinned reads.",
-      "defaultValue": "24h"
-    },
-    {
-      "name": "opportunities.research.attachment-summaries-enabled",
-      "type": "java.lang.Boolean",
-      "description": "Also summarize each stored attachment link of a notice in its own inference request, separately from the description. Downloads follow the research direct-fetch policy; PDFs are sent to a document-capable provider as native documents; otherwise their text layer is extracted with pdftotext and sent as text, with page images (agent.research.files.* limits) only for scanned PDFs on a vision-capable provider; text files are sent as text. A failed attachment is recorded, never fails the description summary.",
-      "defaultValue": true
-    },
-    {
-      "name": "opportunities.research.max-attachments",
-      "type": "java.lang.Integer",
-      "description": "Maximum stored attachment links summarized per notice, in stored order; the saved summary flags omitted links. Between 1 and 50.",
-      "defaultValue": 10
-    },
-    {
-      "name": "opportunities.research.max-attachment-bytes",
-      "type": "java.lang.Integer",
-      "description": "Largest downloaded attachment, in bytes, sent for summarization; larger files are recorded as too large. Providers also apply their own document size and page limits.",
-      "defaultValue": 20971520
     },
     {
       "name": "agent.scheduling.enabled",
@@ -928,102 +766,6 @@
       "description": "Exact HTTP(S) origins allowed to access private networks, with Chromium local-network permission scoped to each configured origin. Scheme, host, and effective port must match; protected operator paths remain denied. No paths, credentials, query strings, fragments, or wildcards."
     },
     {
-      "name": "opportunities.summary.schedule.enabled",
-      "type": "java.lang.Boolean",
-      "description": "Generate at most one missing current-version description summary every five minutes, inside the configured window only, for stored notices that are active, eligible, verified and not past their deadline. Defaults to jobrunr.background-job-server.enabled, or true when that property is unset. Requires the JobRunr worker and persistent storage. Generation also requires enabled descriptions, browser and default inference. Independent of ingestion and agent scheduling; startup registers only, with no immediate generation.",
-      "defaultValue": true
-    },
-    {
-      "name": "opportunities.summary.schedule.window-start-hour",
-      "type": "java.lang.Integer",
-      "description": "First hour (0-23, America/New_York) of the daily window in which background description summaries run. Manual summaries from the console ignore the window.",
-      "defaultValue": 0
-    },
-    {
-      "name": "opportunities.summary.schedule.window-end-hour",
-      "type": "java.lang.Integer",
-      "description": "Hour (1-24, America/New_York) at which the background summary window ends, exclusive; must be after the start hour.",
-      "defaultValue": 7
-    },
-    {
-      "name": "opportunities.sam.enabled",
-      "type": "java.lang.Boolean",
-      "description": "Enable explicit manual and authorized agent SAM.gov ingestion. Requires SAM_GOV_API_KEY. Ingestion has no recurring schedule or automatic deferred retry and does not require JobRunr.",
-      "defaultValue": true
-    },
-    {
-      "name": "opportunities.sam.api-key",
-      "type": "java.lang.String",
-      "description": "Ingestion-only SAM.gov API key supplied by SAM_GOV_API_KEY; never used for browser descriptions, stored with opportunities or exposed in diagnostics.",
-      "defaultValue": ""
-    },
-    {
-      "name": "opportunities.sam.naics-codes",
-      "type": "java.util.List<java.lang.String>",
-      "description": "One to 50 six-digit NAICS codes, queried separately; an approximation of IT-service relevance.",
-      "defaultValue": ["541511", "541512", "541513", "541519", "518210"]
-    },
-    {
-      "name": "opportunities.sam.coverage-days",
-      "type": "java.lang.Integer",
-      "description": "Length in days of the default rolling posted-date window, 1 to 366, ending today in America/New_York. One search per NAICS code discovers new notices and re-verifies stored ones posted inside the window; stored notices inside it that no longer come back are marked stale. Explicit backfills may name any range of at most one year.",
-      "defaultValue": 60
-    },
-    {
-      "name": "opportunities.sam.daily-request-limit",
-      "type": "java.lang.Integer",
-      "description": "SAM.gov requests the installation may attempt per UTC day across all syncs, minimum 1; match it to the API key's tier (10 for a personal key without an entity role, 1000 with one). Every HTTP attempt counts, including retries. A run stops before exceeding it and records a cooldown until midnight UTC, which ends early if this limit is raised.",
-      "defaultValue": 10
-    },
-    {
-      "name": "opportunities.sam.eligible-types-only",
-      "type": "java.lang.Boolean",
-      "description": "Ask SAM.gov for solicitation, combined synopsis/solicitation, presolicitation and sources sought notices only, the types ingestion keeps, so a window fits in fewer pages. A stored notice that changes to another type becomes stale rather than inactive.",
-      "defaultValue": true
-    },
-    {
-      "name": "opportunities.sam.page-size",
-      "type": "java.lang.Integer",
-      "description": "SAM.gov page size from 1 to 1000. Offset is a zero-based page index.",
-      "defaultValue": 1000
-    },
-    {
-      "name": "opportunities.sam.connect-timeout",
-      "type": "java.time.Duration",
-      "description": "HTTP connection timeout, at least 100ms. Redirects are disabled.",
-      "defaultValue": "5s"
-    },
-    {
-      "name": "opportunities.sam.request-timeout",
-      "type": "java.time.Duration",
-      "description": "Complete HTTP request timeout including response body, at least 100ms, capped by remaining sync duration.",
-      "defaultValue": "20s"
-    },
-    {
-      "name": "opportunities.sam.max-requests",
-      "type": "java.lang.Integer",
-      "description": "HTTP attempt budget per run shared by every page and retry, minimum 1; the daily request limit narrows it further.",
-      "defaultValue": 100
-    },
-    {
-      "name": "opportunities.sam.max-retries",
-      "type": "java.lang.Integer",
-      "description": "Additional attempts per retryable transport, HTTP 408 or 5xx request, nonnegative, within the shared request budget. HTTP 429 or any unsuccessful response with a valid future Retry-After stops the run; future cooldown eligibility persists.",
-      "defaultValue": 2
-    },
-    {
-      "name": "opportunities.sam.max-retry-delay",
-      "type": "java.time.Duration",
-      "description": "Maximum wait inside a retryable request, nonnegative. Valid future Retry-After eligibility from any unsuccessful HTTP response persists without an automatic retry. HTTP 429 also stops the run when eligibility is absent.",
-      "defaultValue": "30s"
-    },
-    {
-      "name": "opportunities.sam.max-sync-duration",
-      "type": "java.time.Duration",
-      "description": "Maximum sync time budget, at least 100ms.",
-      "defaultValue": "5m"
-    },
-    {
       "name": "agent.monitoring.maximum-active-jobs",
       "type": "java.lang.Integer",
       "defaultValue": 50,
@@ -1094,198 +836,6 @@
       "type": "java.lang.Integer",
       "defaultValue": 100,
       "description": "Minimum recent monitoring runs and maximum settled embedded schedule occurrences to retain, minimum 1."
-    },
-    {
-      "name": "agent.portfolio.max-events",
-      "type": "java.lang.Integer",
-      "description": "Maximum append-only ledger events per portfolio, minimum 1. Refuse capacity overflow without pruning audit or receipts.",
-      "defaultValue": 1000
-    },
-    {
-      "name": "agent.portfolio.max-bson-bytes",
-      "type": "java.lang.Integer",
-      "description": "Maximum encoded BSON aggregate bytes including receipts, 1024 to 12000000; checked before an atomic write.",
-      "defaultValue": 8000000
-    },
-    {
-      "name": "agent.portfolio.quotes.provider",
-      "type": "java.lang.String",
-      "description": "Empty disables quotes; public selects Public US equity quotes, twelve-data selects Twelve Data. Fixed official endpoints only; no fallback. Ledger operations remain available.",
-      "defaultValue": ""
-    },
-    {
-      "name": "agent.portfolio.quotes.api-key",
-      "type": "java.lang.String",
-      "description": "Public API secret or Twelve Data API key from AGENT_PORTFOLIO_QUOTES_API_KEY; never exposed in browser, tools or safe status.",
-      "defaultValue": ""
-    },
-    {
-      "name": "agent.portfolio.quotes.account-id",
-      "type": "java.lang.String",
-      "description": "Public account ID from AGENT_PORTFOLIO_QUOTES_ACCOUNT_ID, required only for public. 1 to 128 ASCII letters, digits, underscores or hyphens. Not exposed in quote evidence or safe status.",
-      "defaultValue": ""
-    },
-    {
-      "name": "agent.portfolio.quotes.freshness",
-      "type": "java.time.Duration",
-      "description": "Maximum known source-price age, up to 7 days. Retrieval time never proves price freshness.",
-      "defaultValue": "36h"
-    },
-    {
-      "name": "agent.portfolio.quotes.connect-timeout",
-      "type": "java.time.Duration",
-      "description": "Standalone quote connection timeout, positive. Task connections inherit the remaining task deadline.",
-      "defaultValue": "3s"
-    },
-    {
-      "name": "agent.portfolio.quotes.request-timeout",
-      "type": "java.time.Duration",
-      "description": "Standalone per-symbol timeout including authentication, reference lookup and quote body. Task requests inherit the remaining task deadline.",
-      "defaultValue": "5s"
-    },
-    {
-      "name": "agent.portfolio.quotes.overall-timeout",
-      "type": "java.time.Duration",
-      "description": "Standalone quote batch deadline, positive. Task batches inherit the remaining task deadline and cancellation.",
-      "defaultValue": "20s"
-    },
-    {
-      "name": "agent.portfolio.quotes.max-symbols",
-      "type": "java.lang.Integer",
-      "description": "Maximum symbols in one valuation, minimum 1; Public uses at most three requests per symbol including authentication. Remaining positions report incomplete coverage. No hidden retries.",
-      "defaultValue": 8
-    },
-    {
-      "name": "agent.portfolio.quotes.max-response-bytes",
-      "type": "java.lang.Integer",
-      "description": "Maximum bytes per upstream response including token and instrument responses, minimum 1024.",
-      "defaultValue": 65536
-    },
-    {
-      "name": "agent.portfolio.quotes.instruments",
-      "type": "java.util.List<net.velocity.agent.portfolio.QuoteProperties$Instrument>",
-      "description": "Trusted listing catalog of unique symbol/exchange MIC/currency identities. No model-supplied network destinations.",
-      "defaultValue": []
-    },
-    {
-      "name": "agent.portfolio.quotes.instruments[].symbol",
-      "type": "java.lang.String",
-      "description": "Canonical listing ticker, up to 24 characters."
-    },
-    {
-      "name": "agent.portfolio.quotes.instruments[].exchange",
-      "type": "java.lang.String",
-      "description": "Four-character exchange MIC, checked against the provider response."
-    },
-    {
-      "name": "agent.portfolio.quotes.instruments[].currency",
-      "type": "java.lang.String",
-      "description": "Three-character ISO trade/quote currency; Public supports USD only. No FX conversion."
-    },
-    {
-      "name": "agent.portfolio.quotes.instruments[].quote-type",
-      "type": "java.lang.String",
-      "description": "Entitlement-specific unknown_delay, last_trade, delayed or end_of_day; configure only from provider entitlement evidence.",
-      "defaultValue": "unknown_delay"
-    },
-    {
-      "name": "agent.portfolio.quotes.instruments[].reconciliation-required",
-      "type": "java.lang.Boolean",
-      "description": "Flag a known split or corporate-action mismatch; suppress trusted gains until manually reconciled.",
-      "defaultValue": false
-    },
-    {
-      "name": "agent.portfolio.public-sync.enabled",
-      "type": "java.lang.Boolean",
-      "defaultValue": true,
-      "description": "Enable scoped Public account ingestion independently of quote selection."
-    },
-    {
-      "name": "agent.portfolio.public-sync.schedule-enabled",
-      "type": "java.lang.Boolean",
-      "defaultValue": true,
-      "description": "Enable typed Public ingestion through the existing JobRunr worker. Manual sync needs no worker."
-    },
-    {
-      "name": "agent.portfolio.public-sync.interval-minutes",
-      "type": "java.lang.Integer",
-      "defaultValue": 60,
-      "description": "Ingestion interval, minimum 5 minutes; missed intervals are skipped."
-    },
-    {
-      "name": "agent.portfolio.public-sync.initial-history-days",
-      "type": "java.lang.Integer",
-      "defaultValue": 90,
-      "description": "Initial account history range, minimum 1 day."
-    },
-    {
-      "name": "agent.portfolio.public-sync.overlap-days",
-      "type": "java.lang.Integer",
-      "defaultValue": 7,
-      "description": "Overlap before completed history coverage, minimum 1 day; older corrections require explicit backfill."
-    },
-    {
-      "name": "agent.portfolio.public-sync.max-positions",
-      "type": "java.lang.Integer",
-      "defaultValue": 500,
-      "description": "Maximum positions in one complete required response."
-    },
-    {
-      "name": "agent.portfolio.public-sync.max-lots",
-      "type": "java.lang.Integer",
-      "defaultValue": 5000,
-      "description": "Maximum imported tax lots per run."
-    },
-    {
-      "name": "agent.portfolio.public-sync.max-pages",
-      "type": "java.lang.Integer",
-      "defaultValue": 50,
-      "description": "Maximum history continuation pages per run."
-    },
-    {
-      "name": "agent.portfolio.public-sync.max-history-records",
-      "type": "java.lang.Integer",
-      "defaultValue": 5000,
-      "description": "Maximum retained history observations including revisions."
-    },
-    {
-      "name": "agent.portfolio.public-sync.max-snapshot-bytes",
-      "type": "java.lang.Integer",
-      "defaultValue": 8000000,
-      "description": "Maximum immutable snapshot or mutable connection document size."
-    },
-    {
-      "name": "agent.portfolio.public-sync.max-run-seconds",
-      "type": "java.lang.Integer",
-      "defaultValue": 180,
-      "description": "Active ingestion deadline, minimum 5 seconds."
-    },
-    {
-      "name": "agent.portfolio.public-sync.retained-snapshots",
-      "type": "java.lang.Integer",
-      "defaultValue": 10,
-      "description": "Number of immutable published snapshots retained for pinned pagination."
-    },
-    {
-      "name": "agent.portfolio.public-sync.retained-runs",
-      "type": "java.lang.Integer",
-      "defaultValue": 1000,
-      "description": "Bound on ordinary durable admission receipts; at capacity further admission fails rather than forgetting request keys. Typed scheduled receipts retain a rolling window."
-    },
-    {
-      "name": "agent.portfolio.public-sync.credentials",
-      "type": "java.util.Map<java.lang.String,java.lang.String>",
-      "description": "Trusted credential references mapped to Public API secrets. Never exposed through status or request input."
-    },
-    {
-      "name": "agent.portfolio.public-sync.connections",
-      "type": "java.util.List<net.velocity.agent.portfolio.broker.PublicBrokerProperties$Connection>",
-      "description": "Configured alias, credential-ref, permitted brokerage account-id and the required owner-account-id."
-    },
-    {
-      "name": "agent.portfolio.public-sync.connections[].owner-account-id",
-      "type": "java.lang.String",
-      "description": "Required registered Velocity account UUID owning this connection. Distinct from the external brokerage account-id; no local fallback."
     },
     {
       "description": "Operator-assigned version of the explicit USD price catalog. Application defaults combine manually verified public prices dated 2026-10-02 (GPT-6 Luna) and 2026-10-16 (Claude) with operator-chosen zero rates for the exact local Qwen model. Each request pins the catalog; changes never reprice prior requests.",
@@ -1363,30 +913,6 @@
       "type": "java.lang.Boolean",
       "defaultValue": true,
       "description": "Mark the system prompt, the tool definitions and the latest conversation turn as ephemeral cache breakpoints on every Claude request so the stable prefix of an agent loop is read from the provider's prompt cache. Applies to the default Claude profile and the Claude cloud continuation."
-    },
-    {
-      "name": "opportunities.pipeline.max-notes",
-      "type": "java.lang.Integer",
-      "defaultValue": 50,
-      "description": "Notes retained per tracked opportunity (1 to 500)."
-    },
-    {
-      "name": "opportunities.pipeline.max-note-chars",
-      "type": "java.lang.Integer",
-      "defaultValue": 4000,
-      "description": "Characters per pipeline note (10 to 20000)."
-    },
-    {
-      "name": "opportunities.pipeline.max-profile-chars",
-      "type": "java.lang.Integer",
-      "defaultValue": 20000,
-      "description": "Characters of the saved company capability statement that fit assessments read (100 to 100000)."
-    },
-    {
-      "name": "opportunities.pipeline.reminder-default-days",
-      "type": "java.lang.Integer",
-      "defaultValue": 3,
-      "description": "Days before the response deadline at which a reminder task runs when no count is given (1 to 60)."
     },
     {
       "name": "web-search.enabled",
