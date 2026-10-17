@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <!-- TEMPLATE: a feature module is a plain jar. It inherits the build, formatting and checkstyle setup from the
+       parent and depends on velocity-core only. It never applies the Spring Boot repackage plugin: only velocity-app
+       builds the executable jar. See docs/adding-a-feature.md. -->
+  <parent>
+    <groupId>net.velocity</groupId>
+    <artifactId>velocity-parent</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <relativePath>../../pom.xml</relativePath>
+  </parent>
+  <artifactId>velocity-example-feature</artifactId>
+  <dependencies>
+    <dependency>
+      <!-- The version comes from the parent's dependencyManagement. -->
+      <groupId>net.velocity</groupId>
+      <artifactId>velocity-core</artifactId>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <executions>
+          <execution>
+            <!-- A feature module depends on velocity-core (and any feature it declares), never on velocity-app or another feature. -->
+            <id>keep-feature-modules-independent</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <bannedDependencies>
+                  <excludes>
+                    <exclude>net.velocity:*</exclude>
+                  </excludes>
+                  <includes>
+                    <include>net.velocity:velocity-core</include>
+                  </includes>
+                </bannedDependencies>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>

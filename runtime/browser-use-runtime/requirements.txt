@@ -1,0 +1,2 @@
+# Install once during operator setup. Task execution never installs packages.
+browser-use==0.13.10

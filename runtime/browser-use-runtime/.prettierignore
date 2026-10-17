@@ -1,0 +1,7 @@
+node_modules/
+.venv/
+package-lock.json
+
+# Browser Use requires a parenthesized arrow function with no surrounding semicolons.
+# Prettier treats this embedded expression as a standalone statement.
+rendered_content.js

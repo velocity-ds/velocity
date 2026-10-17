@@ -1,0 +1,1530 @@
+{
+  "properties": [
+    {
+      "name": "agent.concurrency.max-active-roots",
+      "type": "java.lang.Integer",
+      "defaultValue": 4,
+      "description": "Installation-wide maximum active root workers, including unsettled cancelled operations. Children share their root's slot."
+    },
+    {
+      "name": "agent.concurrency.queue-capacity",
+      "type": "java.lang.Integer",
+      "defaultValue": 100,
+      "description": "Maximum newly queued root admissions. FIFO queue tickets persist in MongoDB; excess admission fails before commit. Recovered existing work is retained when capacity decreases."
+    },
+    {
+      "name": "inference.concurrency.max-requests",
+      "type": "java.lang.Integer",
+      "defaultValue": 4,
+      "description": "Installation-wide maximum concurrent provider requests across all profiles and auxiliary inference, including token counting and open streams."
+    },
+    {
+      "name": "inference.concurrency.queue-capacity",
+      "type": "java.lang.Integer",
+      "defaultValue": 100,
+      "description": "Maximum waiting provider requests in the shared FIFO. Full queues fail before provider dispatch."
+    },
+    {
+      "name": "inference.concurrency.max-wait-millis",
+      "type": "java.lang.Long",
+      "defaultValue": 30000,
+      "description": "Maximum standalone provider queue wait. Task requests instead use their caller's remaining task deadline; cancellation remains interruptible."
+    },
+    {
+      "name": "agent.code-execution.enabled",
+      "type": "java.lang.Boolean",
+      "defaultValue": true,
+      "description": "Enable isolated synchronous Python execution. Disabled creates no Docker activity or recovery worker."
+    },
+    {
+      "name": "agent.code-execution.image",
+      "type": "java.lang.String",
+      "defaultValue": "",
+      "description": "Explicitly installed approved runtime, selected by immutable sha256 image ID or repository digest. No automatic pull or package installation."
+    },
+    {
+      "name": "agent.code-execution.installation-id",
+      "type": "java.lang.String",
+      "defaultValue": "",
+      "description": "Stable installation identity, 8-64 lowercase ASCII letters, digits or hyphens; required for exact sandbox cleanup labels."
+    },
+    {
+      "name": "agent.code-execution.docker-executable",
+      "type": "java.lang.String",
+      "defaultValue": "docker",
+      "description": "Operator-owned Docker CLI executable. Resource limits are fixed: 1 active sandbox, 4 queued, shared task deadline, 1 CPU, 512 MiB memory, 64 processes, 128 MiB writable storage, 64 KiB code and each output stream, 10 input/output files, 10 MiB per exported file and 25 MiB total inputs/exports."
+    },
+    {
+      "name": "quickbooks.enabled",
+      "type": "java.lang.Boolean",
+      "defaultValue": false,
+      "description": "Enable curated QuickBooks tools and operator OAuth connection; no startup provider calls."
+    },
+    {
+      "name": "quickbooks.client-id",
+      "type": "java.lang.String",
+      "defaultValue": "",
+      "description": "Intuit OAuth app client ID for the explicitly selected environment."
+    },
+    {
+      "name": "quickbooks.client-secret",
+      "type": "java.lang.String",
+      "defaultValue": "",
+      "description": "Secret Intuit client credential; only private server configuration."
+    },
+    {
+      "name": "quickbooks.environment",
+      "type": "java.lang.String",
+      "defaultValue": "sandbox",
+      "description": "sandbox or production; credentials and connection generations are environment-bound."
+    },
+    {
+      "name": "quickbooks.redirect-uri",
+      "type": "java.lang.String",
+      "defaultValue": "",
+      "description": "Exact Intuit-registered callback URI. Sandbox supports localhost HTTP; production needs a separately hosted public HTTPS landing page."
+    },
+    {
+      "name": "quickbooks.key",
+      "type": "java.lang.String",
+      "defaultValue": "",
+      "description": "Secret canonical Base64 encryption key for exactly 32 random bytes, separate from other integrations."
+    },
+    {
+      "name": "quickbooks.key-id",
+      "type": "java.lang.String",
+      "defaultValue": "primary",
+      "description": "Active encryption key ID; retain previous keys to decrypt older connection records."
+    },
+    {
+      "name": "quickbooks.previous-keys",
+      "type": "java.lang.String",
+      "defaultValue": "",
+      "description": "Secret strict JSON map of previous encryption key IDs to Base64 keys."
+    },
+    {
+      "name": "quickbooks.request-timeout",
+      "type": "java.time.Duration",
+      "defaultValue": "20s",
+      "description": "Standalone OAuth and MCP request deadline, 1 to 60 seconds. Task token refresh and MCP requests inherit the remaining task deadline."
+    },
+    {
+      "name": "quickbooks.read-enabled",
+      "type": "java.lang.Boolean",
+      "defaultValue": true,
+      "description": "Java allow/deny capability for curated reads; does not restrict the OAuth accounting scope."
+    },
+    {
+      "name": "quickbooks.write-enabled",
+      "type": "java.lang.Boolean",
+      "defaultValue": true,
+      "description": "Java allow/deny capability for curated writes; disabled writes never dispatch. No per-call approval."
+    },
+    {
+      "name": "quickbooks.node-executable",
+      "type": "java.lang.String",
+      "defaultValue": "node",
+      "description": "Operator-owned Node executable; never model-selectable."
+    },
+    {
+      "name": "quickbooks.runtime-directory",
+      "type": "java.lang.String",
+      "defaultValue": "./runtime/quickbooks-runtime",
+      "description": "Installed pinned bridge directory including its locked node_modules; no runtime installation."
+    },
+    {
+      "name": "quickbooks.maximum-response-bytes",
+      "type": "java.lang.Integer",
+      "defaultValue": 1048576,
+      "description": "Java response budget, 16384 to 4194304. Bridge additionally caps API bodies at 1 MiB and results at 240000 characters; larger data fails explicitly."
+    },
+    {
+      "name": "outlook.enabled",
+      "type": "java.lang.Boolean",
+      "defaultValue": false,
+      "description": "Enable the dedicated delegated Mail.Read Inbox integration. No background mail polling."
+    },
+    {
+      "name": "outlook.client-id",
+      "type": "java.lang.String",
+      "defaultValue": "",
+      "description": "Dedicated Microsoft public-client app registration UUID; never requests .default or application permissions."
+    },
+    {
+      "name": "outlook.tenant",
+      "type": "java.lang.String",
+      "defaultValue": "common",
+      "description": "Microsoft authority tenant: common, consumers, organizations or tenant UUID."
+    },
+    {
+      "name": "outlook.key",
+      "type": "java.lang.String",
+      "defaultValue": "",
+      "description": "Secret canonical padded Base64 key for exactly 32 random bytes, dedicated to OAuth record encryption."
+    },
+    {
+      "name": "outlook.key-id",
+      "type": "java.lang.String",
+      "defaultValue": "primary",
+      "description": "Active OAuth encryption key identifier: 1–64 ASCII letters, digits, underscore or hyphen."
+    },
+    {
+      "name": "outlook.previous-keys",
+      "type": "java.lang.String",
+      "defaultValue": "",
+      "description": "Secret strict JSON object containing up to 15 previous OAuth encryption keys by ID, at most 65536 characters."
+    },
+    {
+      "name": "outlook.request-timeout",
+      "type": "java.time.Duration",
+      "defaultValue": "20s",
+      "description": "Standalone Microsoft device authorization/token exchange timeout from 1 to 60 seconds. Standalone mail reads use 20 seconds; task token refresh and reads inherit the remaining task deadline."
+    },
+    {
+      "name": "agent.secrets.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Enable account-owned encrypted credential management and authorized browser login tools. An absent or invalid encryption key leaves the vault unavailable.",
+      "defaultValue": true
+    },
+    {
+      "name": "agent.secrets.key",
+      "type": "java.lang.String",
+      "description": "Active AES-256 encryption key: canonical padded Base64 for exactly 32 random bytes, without whitespace. Supply through the ignored .env or process environment; never commit or log it. Missing or invalid keys fail closed. Changes require restart.",
+      "defaultValue": ""
+    },
+    {
+      "name": "agent.secrets.key-id",
+      "type": "java.lang.String",
+      "description": "Identifier for the active encryption key, matching [A-Za-z0-9_-]{1,64}. Use a new ID for each new key; retain earlier IDs with their original key material when rotating.",
+      "defaultValue": "primary"
+    },
+    {
+      "name": "agent.secrets.previous-keys",
+      "type": "java.lang.String",
+      "description": "Optional strict JSON object mapping up to 15 previous key IDs to canonical Base64-encoded 32-byte keys. Empty means no previous keys. Maximum 65536 characters; duplicate IDs, trailing data and the active key ID are rejected. Supply privately through .env or process environment; changes require restart.",
+      "defaultValue": ""
+    },
+    {
+      "name": "agent.secrets.max-records",
+      "type": "java.lang.Integer",
+      "description": "Maximum credential records per account including permanent deletion tombstones (1-500).",
+      "defaultValue": 100
+    },
+    {
+      "name": "agent.secrets.max-receipts",
+      "type": "java.lang.Integer",
+      "description": "Maximum retained atomic credential-management receipts per account (16-8192). Exhaustion rejects further writes without dropping reconciliation history.",
+      "defaultValue": 4096
+    },
+    {
+      "name": "agent.learning.maximum-output-tokens",
+      "type": "java.lang.Long",
+      "description": "Maximum permitted pinned profile output allowance for a bounded review; larger profiles fail before inference. Set at least as high as the configured model output allowance; this does not override provider max-tokens or the total review budget.",
+      "defaultValue": 8192
+    },
+    {
+      "name": "agent.memory.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Enable durable fact tools and admission snapshots.",
+      "defaultValue": true
+    },
+    {
+      "name": "agent.memory.user-enabled",
+      "type": "java.lang.Boolean",
+      "description": "Permit user fact stores within the complete owner scope.",
+      "defaultValue": true
+    },
+    {
+      "name": "agent.memory.environment-enabled",
+      "type": "java.lang.Boolean",
+      "description": "Permit environment fact stores within the complete owner scope.",
+      "defaultValue": true
+    },
+    {
+      "name": "agent.memory.user-max-chars",
+      "type": "java.lang.Integer",
+      "description": "Maximum rendered user facts in UTF-16 code units including entry delimiters.",
+      "defaultValue": 1500
+    },
+    {
+      "name": "agent.memory.environment-max-chars",
+      "type": "java.lang.Integer",
+      "description": "Maximum rendered environment facts in UTF-16 code units including entry delimiters.",
+      "defaultValue": 2200
+    },
+    {
+      "name": "agent.memory.max-receipts",
+      "type": "java.lang.Integer",
+      "description": "Bound atomic mutation receipts; exhaustion fails closed without dropping unsettled identities.",
+      "defaultValue": 1024
+    },
+    {
+      "name": "agent.memory.max-proposals",
+      "type": "java.lang.Integer",
+      "description": "Maximum pending fact proposals per store.",
+      "defaultValue": 32
+    },
+    {
+      "name": "agent.memory.max-writes-per-execution",
+      "type": "java.lang.Integer",
+      "description": "Bound fact writes in restricted learning reviews. Ordinary user tasks have no attempt-count cutoff.",
+      "defaultValue": 6
+    },
+    {
+      "name": "agent.skills.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Enable versioned skill tools and admission index.",
+      "defaultValue": true
+    },
+    {
+      "name": "agent.skills.self-check-enabled",
+      "type": "java.lang.Boolean",
+      "description": "Before a root task's final answer is accepted, if the task loaded a skill, run one extra model turn that may patch that skill. The answer given before the check is delivered unchanged. Skipped with under 60 seconds of active time left.",
+      "defaultValue": true
+    },
+    {
+      "name": "agent.skills.maximum-core-chars",
+      "type": "java.lang.Integer",
+      "description": "Maximum complete skill core instructions in UTF-16 code units.",
+      "defaultValue": 6000
+    },
+    {
+      "name": "agent.skills.maximum-index-chars",
+      "type": "java.lang.Integer",
+      "description": "Maximum rendered owner skill routing index in UTF-16 code units.",
+      "defaultValue": 12000
+    },
+    {
+      "name": "agent.skills.maximum-reference-chars",
+      "type": "java.lang.Integer",
+      "description": "Maximum inert supporting reference text in UTF-16 code units.",
+      "defaultValue": 6000
+    },
+    {
+      "name": "agent.skills.maximum-skills",
+      "type": "java.lang.Integer",
+      "description": "Maximum skills per complete owner scope.",
+      "defaultValue": 20
+    },
+    {
+      "name": "agent.skills.retained-versions",
+      "type": "java.lang.Integer",
+      "description": "Maximum immutable versions retained per skill.",
+      "defaultValue": 6
+    },
+    {
+      "name": "agent.history.search-enabled",
+      "type": "java.lang.Boolean",
+      "description": "Enable lexical message projection and message search tools.",
+      "defaultValue": true
+    },
+    {
+      "name": "agent.history.maximum-indexed-executions-per-pass",
+      "type": "java.lang.Integer",
+      "description": "Maximum canonical executions projected in each background pass.",
+      "defaultValue": 200
+    },
+    {
+      "name": "agent.history.maximum-indexed-message-chars",
+      "type": "java.lang.Integer",
+      "description": "Bound searchable prefix of a single original message; original content stays authoritative.",
+      "defaultValue": 16000
+    },
+    {
+      "name": "agent.learning.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Enable acknowledged-interaction reflection using an independent durable review journal.",
+      "defaultValue": true
+    },
+    {
+      "name": "agent.learning.fact-review-every-user-turns",
+      "type": "java.lang.Integer",
+      "description": "Successfully acknowledged user turns per owner before fact review. 1 reviews facts after every acknowledged turn.",
+      "defaultValue": 1
+    },
+    {
+      "name": "agent.learning.profile-review-every-fact-reviews",
+      "type": "java.lang.Integer",
+      "description": "Completed fact reviews between refreshes of the derived user profile.",
+      "defaultValue": 5
+    },
+    {
+      "name": "agent.learning.curator-every-days",
+      "type": "java.lang.Integer",
+      "description": "Days between curator reviews that may propose retiring stale or duplicate agent-managed skills. 0 disables the curator.",
+      "defaultValue": 7
+    },
+    {
+      "name": "agent.memory.profile-enabled",
+      "type": "java.lang.Boolean",
+      "description": "Keep a derived user profile: one bounded paragraph of model inference refreshed by background profile reviews and loaded under the saved facts. Tasks cannot write it.",
+      "defaultValue": true
+    },
+    {
+      "name": "agent.memory.profile-max-chars",
+      "type": "java.lang.Integer",
+      "description": "Capacity of the derived user profile in UTF-16 code units.",
+      "defaultValue": 1500
+    },
+    {
+      "name": "agent.learning.notifications",
+      "type": "java.lang.String",
+      "description": "Learning notice posted to the source Slack thread after a review saves or stages something: off, on (counts only) or verbose (one line per change). Console-origin tasks are never notified; the Journey view shows them.",
+      "defaultValue": "on"
+    },
+    {
+      "name": "agent.learning.skill-review-every-tool-iterations",
+      "type": "java.lang.Integer",
+      "description": "Completed accepted response tool batches per owner before skill review.",
+      "defaultValue": 10
+    },
+    {
+      "name": "agent.learning.maximum-input-chars",
+      "type": "java.lang.Integer",
+      "description": "Maximum original interaction characters offered to a review.",
+      "defaultValue": 30000
+    },
+    {
+      "name": "agent.learning.maximum-total-tokens",
+      "type": "java.lang.Long",
+      "description": "Cumulative review token ceiling including conservative unknown usage reservations.",
+      "defaultValue": 100000
+    },
+    {
+      "name": "agent.learning.maximum-millis",
+      "type": "java.lang.Long",
+      "description": "Maximum active review duration in milliseconds.",
+      "defaultValue": 120000
+    },
+    {
+      "name": "agent.learning.maximum-model-turns",
+      "type": "java.lang.Integer",
+      "description": "Maximum provider attempts per review.",
+      "defaultValue": 5
+    },
+    {
+      "name": "agent.learning.maximum-tool-calls",
+      "type": "java.lang.Integer",
+      "description": "Maximum review tool calls.",
+      "defaultValue": 8
+    },
+    {
+      "name": "agent.learning.worker-enabled",
+      "type": "java.lang.Boolean",
+      "description": "Run the process-local durable review queue when learning is enabled; independent of JobRunr.",
+      "defaultValue": true
+    },
+    {
+      "name": "agent.learning.profile",
+      "type": "java.lang.String",
+      "description": "Inference profile that runs reviews (for example default or cloud-fallback). Empty uses each source task's pinned profile. Startup fails when the named profile is not configured.",
+      "defaultValue": ""
+    },
+    {
+      "name": "agent.learning.maximum-interaction-chars",
+      "type": "java.lang.Integer",
+      "description": "Maximum characters of one acknowledged interaction's digest (request, corrections, tool outcomes, answer and recent messages) offered to a review. At most agent.learning.maximum-input-chars.",
+      "defaultValue": 6000
+    },
+    {
+      "name": "agent.learning.maximum-review-interactions",
+      "type": "java.lang.Integer",
+      "description": "Maximum number of most recent acknowledged interactions offered to one review.",
+      "defaultValue": 3
+    },
+    {
+      "name": "agent.learning.maximum-consecutive-failures",
+      "type": "java.lang.Integer",
+      "description": "Failed reviews of one mode in a row before the cadence watermark advances past their inputs instead of re-reviewing them.",
+      "defaultValue": 2
+    },
+    {
+      "name": "agent.delegation.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Enable sequential internal child conversations sharing root authority, capacity and delivery.",
+      "defaultValue": true
+    },
+    {
+      "name": "agent.delegation.max-children",
+      "type": "java.lang.Integer",
+      "description": "Lifetime child count, including failed and superseded children; minimum 1.",
+      "defaultValue": 8
+    },
+    {
+      "name": "agent.delegation.max-objective-chars",
+      "type": "java.lang.Integer",
+      "description": "Maximum focused assignment length in Unicode code points; minimum 1.",
+      "defaultValue": 4000
+    },
+    {
+      "name": "agent.delegation.max-context-chars",
+      "type": "java.lang.Integer",
+      "description": "Maximum optional untrusted parent context length in Unicode code points; minimum 1.",
+      "defaultValue": 8000
+    },
+    {
+      "name": "agent.delegation.max-references",
+      "type": "java.lang.Integer",
+      "description": "Maximum typed immutable references in one assignment; minimum 1.",
+      "defaultValue": 32
+    },
+    {
+      "name": "agent.delegation.max-result-bytes",
+      "type": "java.lang.Integer",
+      "description": "Complete serialized UTF-8 child result allowance; minimum 512 bytes, bounded by parent preview, context and child state allowances.",
+      "defaultValue": 8192
+    },
+    {
+      "name": "agent.delegation.max-child-state-bytes",
+      "type": "java.lang.Integer",
+      "description": "Complete serialized UTF-8 nested state allowance per child; minimum 16384 bytes, including native blocks, calls and receipts.",
+      "defaultValue": 262144
+    },
+    {
+      "name": "agent.delegation.max-aggregate-state-bytes",
+      "type": "java.lang.Integer",
+      "description": "Complete serialized UTF-8 child-map allowance; at least the per-child allowance, subject to MongoDB document capacity.",
+      "defaultValue": 2097152
+    },
+    {
+      "name": "opportunities.research.description-cache-retention",
+      "type": "java.time.Duration",
+      "description": "TTL retention for immutable public browser-description sources; execution-owned captured evidence has separate lifetime.",
+      "defaultValue": "168h"
+    },
+    {
+      "name": "agent.research.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Register execution-owned research and report tools; stored catalog tools remain available independently.",
+      "defaultValue": true
+    },
+    {
+      "name": "agent.research.direct-fetch-enabled",
+      "type": "java.lang.Boolean",
+      "description": "Permit controlled document HTTP GET retrieval without enabling Chromium.",
+      "defaultValue": true
+    },
+    {
+      "name": "agent.research.allowed-hosts",
+      "type": "java.util.List<java.lang.String>",
+      "description": "Exact direct-fetch host allowlist; empty permits public destinations. Each redirect is checked."
+    },
+    {
+      "name": "agent.research.private-origins",
+      "type": "java.util.List<java.lang.String>",
+      "description": "Explicit exact direct-fetch private origins. Operator API paths remain blocked."
+    },
+    {
+      "name": "agent.research.max-task-requests",
+      "type": "java.lang.Integer",
+      "description": "Durable maximum direct-fetch requests per task, including redirects and failures.",
+      "defaultValue": 20
+    },
+    {
+      "name": "agent.research.fetch-timeout",
+      "type": "java.time.Duration",
+      "description": "Standalone direct-fetch deadline including queue and redirect time. Task fetches inherit the remaining task deadline.",
+      "defaultValue": "30s"
+    },
+    {
+      "name": "agent.research.max-redirects",
+      "type": "java.lang.Integer",
+      "description": "Maximum separately checked direct-fetch redirects.",
+      "defaultValue": 5
+    },
+    {
+      "name": "agent.research.max-concurrent-downloads",
+      "type": "java.lang.Integer",
+      "description": "Process-wide concurrent controlled downloads.",
+      "defaultValue": 2
+    },
+    {
+      "name": "agent.research.max-extracted-chars",
+      "type": "java.lang.Integer",
+      "description": "Maximum extracted text characters per document.",
+      "defaultValue": 1000000
+    },
+    {
+      "name": "agent.research.max-expanded-bytes",
+      "type": "java.lang.Integer",
+      "description": "Maximum decompressed DOCX content bytes inspected by the passive document parser.",
+      "defaultValue": 20971520
+    },
+    {
+      "name": "agent.research.max-archive-entries",
+      "type": "java.lang.Integer",
+      "description": "Maximum DOCX ZIP entries; general archive extraction is unsupported.",
+      "defaultValue": 256
+    },
+    {
+      "name": "agent.research.extraction-timeout",
+      "type": "java.time.Duration",
+      "description": "Standalone cooperative non-PDF extraction deadline. Task extraction inherits the remaining task deadline; parser settlement remains tracked.",
+      "defaultValue": "20s"
+    },
+    {
+      "name": "agent.research.max-artifacts",
+      "type": "java.lang.Integer",
+      "description": "Maximum managed source, evidence, document and report artifacts per task.",
+      "defaultValue": 100
+    },
+    {
+      "name": "agent.research.max-report-bytes",
+      "type": "java.lang.Integer",
+      "description": "Maximum deterministic Markdown report bytes.",
+      "defaultValue": 262144
+    },
+    {
+      "name": "agent.research.max-output-file-bytes",
+      "type": "java.lang.Integer",
+      "description": "Maximum bytes of one output file the task stages for the requester with task_attach_file or browser_screenshot.",
+      "defaultValue": 10485760
+    },
+    {
+      "name": "agent.uploads.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Accept files attached to task requests in the operator console or to Slack messages. Disabled, a request or message carrying files is rejected.",
+      "defaultValue": true
+    },
+    {
+      "name": "agent.uploads.max-files",
+      "type": "java.lang.Integer",
+      "description": "Maximum files attached to one task request or Slack message, and to one task in all, 1 to 100.",
+      "defaultValue": 10
+    },
+    {
+      "name": "agent.uploads.max-file-bytes",
+      "type": "java.lang.Long",
+      "description": "Maximum decoded bytes of one attached file, minimum 1024. Also the ceiling for console downloads of stored files.",
+      "defaultValue": 10485760
+    },
+    {
+      "name": "agent.uploads.max-total-bytes",
+      "type": "java.lang.Long",
+      "description": "Maximum decoded bytes of all files attached to one task request or Slack message, and to one task in all; sets the request body ceiling of POST /api/agent/executions (Base64 overhead plus 1 MiB).",
+      "defaultValue": 26214400
+    },
+    {
+      "name": "agent.research.files.pdfinfo-command",
+      "type": "java.lang.String",
+      "description": "Installed Poppler pdfinfo executable name or absolute path; never a shell command line. Used lazily when reading a PDF.",
+      "defaultValue": "pdfinfo"
+    },
+    {
+      "name": "agent.research.files.render-command",
+      "type": "java.lang.String",
+      "description": "Installed Poppler pdftoppm executable name or absolute path for bounded PNG page rendering; never a shell command line.",
+      "defaultValue": "pdftoppm"
+    },
+    {
+      "name": "agent.research.files.pdftotext-command",
+      "type": "java.lang.String",
+      "description": "Installed Poppler pdftotext executable name or absolute path for bounded text-layer extraction (opportunity attachment summaries on a provider without native document input); never a shell command line.",
+      "defaultValue": "pdftotext"
+    },
+    {
+      "name": "agent.research.files.max-units",
+      "type": "java.lang.Integer",
+      "description": "Maximum file units processed through the selected InferenceService, minimum 1. Units are rendered PDF pages or bounded text sections.",
+      "defaultValue": 20
+    },
+    {
+      "name": "agent.research.files.page-dimension",
+      "type": "java.lang.Integer",
+      "description": "Maximum rendered PNG page dimension in pixels, minimum 512.",
+      "defaultValue": 1600
+    },
+    {
+      "name": "agent.research.files.max-page-image-bytes",
+      "type": "java.lang.Integer",
+      "description": "Maximum rendered PNG bytes for one page, minimum 1024.",
+      "defaultValue": 5242880
+    },
+    {
+      "name": "agent.research.files.max-output-chars-per-unit",
+      "type": "java.lang.Integer",
+      "description": "Maximum model output characters per file unit, minimum 1000; total extracted text and inference token limits also apply.",
+      "defaultValue": 24000
+    },
+    {
+      "name": "agent.research.files.timeout",
+      "type": "java.time.Duration",
+      "description": "Standalone file preprocessing and inference deadline, at least one second. Task calls inherit the remaining task deadline.",
+      "defaultValue": "90s"
+    },
+    {
+      "name": "opportunities.research.descriptions-enabled",
+      "type": "java.lang.Boolean",
+      "description": "Permit rendered descriptions from stored opportunity links through the isolated browser. Requires enabled browser; task evidence also requires research tools, while inline summaries use default inference. No API key or API fallback.",
+      "defaultValue": true
+    },
+    {
+      "name": "opportunities.research.max-requests-per-task",
+      "type": "java.lang.Integer",
+      "description": "Durable maximum browser page retrieval attempts per task, including failures; individual redirects and subresources are not counted.",
+      "defaultValue": 24
+    },
+    {
+      "name": "opportunities.research.task-request-window",
+      "type": "java.time.Duration",
+      "description": "Durable fixed elapsed window from the first reserved browser description page attempt; survives restart.",
+      "defaultValue": "2m"
+    },
+    {
+      "name": "opportunities.research.max-description-chars",
+      "type": "java.lang.Integer",
+      "description": "Maximum rendered description text characters per immutable browser source, including below-viewport content; task tools paginate the source within their separate output limits. Inline summaries use the smaller of this value and 128000 characters. Capture coverage and truncation remain explicit.",
+      "defaultValue": 500000
+    },
+    {
+      "name": "opportunities.research.description-cache-ttl",
+      "type": "java.time.Duration",
+      "description": "Freshness period for unpinned browser-description source reuse. Legacy API sources are excluded from new unpinned reads.",
+      "defaultValue": "24h"
+    },
+    {
+      "name": "opportunities.research.attachment-summaries-enabled",
+      "type": "java.lang.Boolean",
+      "description": "Also summarize each stored attachment link of a notice in its own inference request, separately from the description. Downloads follow the research direct-fetch policy; PDFs are sent to a document-capable provider as native documents; otherwise their text layer is extracted with pdftotext and sent as text, with page images (agent.research.files.* limits) only for scanned PDFs on a vision-capable provider; text files are sent as text. A failed attachment is recorded, never fails the description summary.",
+      "defaultValue": true
+    },
+    {
+      "name": "opportunities.research.max-attachments",
+      "type": "java.lang.Integer",
+      "description": "Maximum stored attachment links summarized per notice, in stored order; the saved summary flags omitted links. Between 1 and 50.",
+      "defaultValue": 10
+    },
+    {
+      "name": "opportunities.research.max-attachment-bytes",
+      "type": "java.lang.Integer",
+      "description": "Largest downloaded attachment, in bytes, sent for summarization; larger files are recorded as too large. Providers also apply their own document size and page limits.",
+      "defaultValue": 20971520
+    },
+    {
+      "name": "agent.scheduling.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Enable durable agent schedules through AGENT_SCHEDULING_ENABLED. The JobRunr background worker is enabled separately and requires a persistent store.",
+      "defaultValue": true
+    },
+    {
+      "name": "agent.scheduling.maximum-lateness",
+      "type": "java.time.Duration",
+      "description": "Allowed recurring queue lateness before skipping an occurrence. One-time occurrences may run once after recovery.",
+      "defaultValue": "60s"
+    },
+    {
+      "name": "slack.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Enable the single-workspace Slack Socket Mode bot. Requires bot and app-level tokens.",
+      "defaultValue": false
+    },
+    {
+      "name": "slack.bot-token",
+      "type": "java.lang.String",
+      "description": "Slack bot OAuth token (xoxb-), supplied through SLACK_BOT_TOKEN."
+    },
+    {
+      "name": "slack.app-token",
+      "type": "java.lang.String",
+      "description": "Slack app-level token (xapp-) with connections:write, supplied through SLACK_APP_TOKEN."
+    },
+    {
+      "name": "slack.workers",
+      "type": "java.lang.Integer",
+      "description": "Maximum concurrent Slack ingress dispatch workers, minimum 1. Agent workers are managed separately.",
+      "defaultValue": 4
+    },
+    {
+      "name": "slack.queue-capacity",
+      "type": "java.lang.Integer",
+      "description": "Maximum waiting Slack ingress events, minimum 1. Socket envelopes are acknowledged before asynchronous dispatch.",
+      "defaultValue": 100
+    },
+    {
+      "name": "inference.provider",
+      "type": "java.lang.String",
+      "description": "Explicit inference provider: claude, openai, or llama-cpp. Empty leaves agent tasks and the inference playground unavailable."
+    },
+    {
+      "name": "inference.primary.context-capacity",
+      "type": "java.lang.Long",
+      "description": "Explicit context capacity required when a default provider is selected. Zero leaves capacity undeclared; otherwise input allowance, provider max-tokens, and safety margin must fit."
+    },
+    {
+      "name": "inference.primary.input-allowance",
+      "type": "java.lang.Long",
+      "description": "Explicit positive input allowance required when a default provider is selected. Built-in providers use native input-token counts plus 2048 tokens of headroom; custom providers without counting retain a conservative byte estimate. Separate from the cumulative task token budget."
+    },
+    {
+      "name": "inference.primary.safety-margin",
+      "type": "java.lang.Long",
+      "description": "Explicit nonnegative unused context reserve required when a default provider is selected; validated against a declared context capacity."
+    },
+    {
+      "name": "inference.cloud-fallback.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Explicitly admit one hosted continuation profile for new local tasks exceeding their per-request input allowance. Disabled settings are not bound or validated and create no hosted SDK client. Does not enable failure retries or change existing task limits.",
+      "defaultValue": true
+    },
+    {
+      "name": "inference.cloud-fallback.provider",
+      "type": "java.lang.String",
+      "description": "Exactly one hosted continuation provider, openai or claude; required only when enabled. Uses the selected provider's existing OPENAI_API_KEY or ANTHROPIC_API_KEY.",
+      "defaultValue": ""
+    },
+    {
+      "name": "inference.cloud-fallback.model",
+      "type": "java.lang.String",
+      "description": "Hosted model identifier required only when cloud continuation is enabled. Verify model context/output limits and account availability before configuring.",
+      "defaultValue": ""
+    },
+    {
+      "name": "inference.cloud-fallback.context-capacity",
+      "type": "java.lang.Long",
+      "description": "Explicit hosted model context capacity required when cloud continuation is enabled. Zero leaves capacity undeclared; otherwise input allowance, output reserve, and safety margin must fit."
+    },
+    {
+      "name": "inference.cloud-fallback.input-allowance",
+      "type": "java.lang.Long",
+      "description": "Explicit positive input allowance per cloud continuation request, using the hosted provider's native input-token count plus 2048 tokens of headroom. Required when enabled; actual handoff must also fit the remaining task token budget (the task token ceiling for ordinary tasks, the cumulative token limit for monitoring)."
+    },
+    {
+      "name": "inference.cloud-fallback.output-reserve",
+      "type": "java.lang.Long",
+      "description": "Explicit positive hosted maximum output tokens and per-request output reservation required when cloud continuation is enabled, including reasoning where applicable. Must fit the selected model output limit and any declared context capacity."
+    },
+    {
+      "name": "inference.cloud-fallback.safety-margin",
+      "type": "java.lang.Long",
+      "description": "Explicit nonnegative unused context reserve required when cloud continuation is enabled."
+    },
+    {
+      "name": "inference.claude.model",
+      "type": "java.lang.String",
+      "description": "Explicit Anthropic model identifier required when the Claude provider is selected."
+    },
+    {
+      "name": "inference.claude.max-tokens",
+      "type": "java.lang.Long",
+      "description": "Explicit maximum output tokens required when Claude is selected. Must be positive and within the model's output limit. Large budgets may require streaming with the Anthropic SDK."
+    },
+    {
+      "name": "inference.openai.model",
+      "type": "java.lang.String",
+      "description": "Explicit OpenAI model identifier required when OpenAI is selected for Responses API requests."
+    },
+    {
+      "name": "inference.openai.max-tokens",
+      "type": "java.lang.Long",
+      "description": "Explicit maximum output tokens required when OpenAI is selected, including reasoning tokens. Must be positive and within the selected model's output limit; this is not its context capacity."
+    },
+    {
+      "name": "inference.llama-cpp.base-url",
+      "type": "java.lang.String",
+      "description": "Explicit base URL required when llama.cpp is selected, including the /v1 path of the llama-server OpenAI-compatible API."
+    },
+    {
+      "name": "inference.llama-cpp.model",
+      "type": "java.lang.String",
+      "description": "Explicit loaded model name or --alias configured on llama-server, required when llama.cpp is selected."
+    },
+    {
+      "name": "inference.llama-cpp.max-tokens",
+      "type": "java.lang.Long",
+      "description": "Explicit maximum output tokens required when llama.cpp is selected. Must be positive and fit the server's per-slot context capacity alongside input and safety allowances."
+    },
+    {
+      "name": "inference.llama-cpp.api-key",
+      "type": "java.lang.String",
+      "description": "Optional llama-server API key supplied through LLAMA_CPP_API_KEY; explicitly set a blank value for servers with authentication disabled."
+    },
+    {
+      "name": "agent.automatic-resumption",
+      "type": "java.lang.Boolean",
+      "description": "Resume running tasks after settlement recovery; false blocks interrupted work without replay.",
+      "defaultValue": true
+    },
+    {
+      "name": "agent.limits.total-tokens",
+      "type": "java.lang.Long",
+      "description": "Cumulative cap for restricted workflows. Ordinary user tasks ignore this cap while still recording usage.",
+      "defaultValue": 470000
+    },
+    {
+      "name": "agent.limits.active-millis",
+      "type": "java.lang.Long",
+      "description": "Shared active-time allowance for a task, including inference, tools and children. Default 30 minutes; ordinary tasks have no shorter operation deadline.",
+      "defaultValue": 1800000
+    },
+    {
+      "name": "agent.limits.model-turns",
+      "type": "java.lang.Integer",
+      "description": "Request cap for restricted workflows. Ordinary user tasks ignore this cap.",
+      "defaultValue": 150
+    },
+    {
+      "name": "agent.limits.tool-calls",
+      "type": "java.lang.Integer",
+      "description": "Dispatch cap for restricted workflows. Ordinary user tasks ignore this cap.",
+      "defaultValue": 100
+    },
+    {
+      "name": "agent.limits.tool-timeout-millis",
+      "type": "java.lang.Long",
+      "description": "Operation ceiling for restricted workflows. Ordinary task operations inherit remaining task time.",
+      "defaultValue": 30000
+    },
+    {
+      "name": "agent.limits.output-preview-chars",
+      "type": "java.lang.Integer",
+      "defaultValue": 24576
+    },
+    {
+      "name": "agent.limits.task-token-ceiling",
+      "type": "java.lang.Long",
+      "description": "Total charged tokens, including child runs and unsettled reservations, at which an ordinary user task stops as partial with reason task_token_ceiling and starts no further model request. 0 disables the ceiling. Monitoring and learning work keep their own budgets.",
+      "defaultValue": 5000000
+    },
+    {
+      "name": "agent.browser.enabled",
+      "type": "java.lang.Boolean",
+      "defaultValue": true,
+      "description": "Enable Browser Use's native DOM/action backend with isolated execution-owned Chromium sessions. Startup is lazy; pinned Python and locked Node/Chromium dependencies must be installed."
+    },
+    {
+      "name": "agent.browser.headless",
+      "type": "java.lang.Boolean",
+      "defaultValue": false,
+      "description": "Launch isolated Browser Use Chromium sessions in headless mode."
+    },
+    {
+      "name": "agent.browser.node-executable",
+      "type": "java.lang.String",
+      "defaultValue": "node",
+      "description": "Operator-controlled Node.js executable used to provision and guard the isolated Chromium process. Model arguments cannot change this path."
+    },
+    {
+      "name": "agent.browser.python-executable",
+      "type": "java.lang.String",
+      "defaultValue": "python",
+      "description": "Operator-controlled Python executable with pinned Browser Use dependencies installed. Provider credentials and developer .env settings are not passed to the process."
+    },
+    {
+      "name": "agent.browser.launcher-script",
+      "type": "java.lang.String",
+      "defaultValue": "runtime/browser-use-runtime/launch.cjs",
+      "description": "Operator-controlled trusted launcher for guarded Chromium and the Browser Use stdio bridge. Install runtime/browser-use-runtime's pinned Python and locked Node dependencies before use; task execution never installs packages."
+    },
+    {
+      "name": "agent.browser.allowed-hosts",
+      "type": "java.util.List<java.lang.String>",
+      "defaultValue": [],
+      "description": "Optional exact destination host allowlist; no wildcards, ports, or suffix matches. Private networks remain blocked without exact private-origins overrides."
+    },
+    {
+      "name": "agent.browser.private-origins",
+      "type": "java.util.List<java.lang.String>",
+      "defaultValue": [],
+      "description": "Exact HTTP(S) origins allowed to access private networks, with Chromium local-network permission scoped to each configured origin. Scheme, host, and effective port must match; protected operator paths remain denied. No paths, credentials, query strings, fragments, or wildcards."
+    },
+    {
+      "name": "opportunities.summary.schedule.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Generate at most one missing current-version description summary every five minutes, inside the configured window only, for stored notices that are active, eligible, verified and not past their deadline. Defaults to jobrunr.background-job-server.enabled, or true when that property is unset. Requires the JobRunr worker and persistent storage. Generation also requires enabled descriptions, browser and default inference. Independent of ingestion and agent scheduling; startup registers only, with no immediate generation.",
+      "defaultValue": true
+    },
+    {
+      "name": "opportunities.summary.schedule.window-start-hour",
+      "type": "java.lang.Integer",
+      "description": "First hour (0-23, America/New_York) of the daily window in which background description summaries run. Manual summaries from the console ignore the window.",
+      "defaultValue": 0
+    },
+    {
+      "name": "opportunities.summary.schedule.window-end-hour",
+      "type": "java.lang.Integer",
+      "description": "Hour (1-24, America/New_York) at which the background summary window ends, exclusive; must be after the start hour.",
+      "defaultValue": 7
+    },
+    {
+      "name": "opportunities.sam.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Enable explicit manual and authorized agent SAM.gov ingestion. Requires SAM_GOV_API_KEY. Ingestion has no recurring schedule or automatic deferred retry and does not require JobRunr.",
+      "defaultValue": true
+    },
+    {
+      "name": "opportunities.sam.api-key",
+      "type": "java.lang.String",
+      "description": "Ingestion-only SAM.gov API key supplied by SAM_GOV_API_KEY; never used for browser descriptions, stored with opportunities or exposed in diagnostics.",
+      "defaultValue": ""
+    },
+    {
+      "name": "opportunities.sam.naics-codes",
+      "type": "java.util.List<java.lang.String>",
+      "description": "One to 50 six-digit NAICS codes, queried separately; an approximation of IT-service relevance.",
+      "defaultValue": ["541511", "541512", "541513", "541519", "518210"]
+    },
+    {
+      "name": "opportunities.sam.coverage-days",
+      "type": "java.lang.Integer",
+      "description": "Length in days of the default rolling posted-date window, 1 to 366, ending today in America/New_York. One search per NAICS code discovers new notices and re-verifies stored ones posted inside the window; stored notices inside it that no longer come back are marked stale. Explicit backfills may name any range of at most one year.",
+      "defaultValue": 60
+    },
+    {
+      "name": "opportunities.sam.daily-request-limit",
+      "type": "java.lang.Integer",
+      "description": "SAM.gov requests the installation may attempt per UTC day across all syncs, minimum 1; match it to the API key's tier (10 for a personal key without an entity role, 1000 with one). Every HTTP attempt counts, including retries. A run stops before exceeding it and records a cooldown until midnight UTC, which ends early if this limit is raised.",
+      "defaultValue": 10
+    },
+    {
+      "name": "opportunities.sam.eligible-types-only",
+      "type": "java.lang.Boolean",
+      "description": "Ask SAM.gov for solicitation, combined synopsis/solicitation, presolicitation and sources sought notices only, the types ingestion keeps, so a window fits in fewer pages. A stored notice that changes to another type becomes stale rather than inactive.",
+      "defaultValue": true
+    },
+    {
+      "name": "opportunities.sam.page-size",
+      "type": "java.lang.Integer",
+      "description": "SAM.gov page size from 1 to 1000. Offset is a zero-based page index.",
+      "defaultValue": 1000
+    },
+    {
+      "name": "opportunities.sam.connect-timeout",
+      "type": "java.time.Duration",
+      "description": "HTTP connection timeout, at least 100ms. Redirects are disabled.",
+      "defaultValue": "5s"
+    },
+    {
+      "name": "opportunities.sam.request-timeout",
+      "type": "java.time.Duration",
+      "description": "Complete HTTP request timeout including response body, at least 100ms, capped by remaining sync duration.",
+      "defaultValue": "20s"
+    },
+    {
+      "name": "opportunities.sam.max-requests",
+      "type": "java.lang.Integer",
+      "description": "HTTP attempt budget per run shared by every page and retry, minimum 1; the daily request limit narrows it further.",
+      "defaultValue": 100
+    },
+    {
+      "name": "opportunities.sam.max-retries",
+      "type": "java.lang.Integer",
+      "description": "Additional attempts per retryable transport, HTTP 408 or 5xx request, nonnegative, within the shared request budget. HTTP 429 or any unsuccessful response with a valid future Retry-After stops the run; future cooldown eligibility persists.",
+      "defaultValue": 2
+    },
+    {
+      "name": "opportunities.sam.max-retry-delay",
+      "type": "java.time.Duration",
+      "description": "Maximum wait inside a retryable request, nonnegative. Valid future Retry-After eligibility from any unsuccessful HTTP response persists without an automatic retry. HTTP 429 also stops the run when eligibility is absent.",
+      "defaultValue": "30s"
+    },
+    {
+      "name": "opportunities.sam.max-sync-duration",
+      "type": "java.time.Duration",
+      "description": "Maximum sync time budget, at least 100ms.",
+      "defaultValue": "5m"
+    },
+    {
+      "name": "agent.monitoring.maximum-active-jobs",
+      "type": "java.lang.Integer",
+      "defaultValue": 50,
+      "description": "Maximum open monitoring jobs per registered Velocity account."
+    },
+    {
+      "name": "agent.monitoring.concurrent-runs",
+      "type": "java.lang.Integer",
+      "defaultValue": 4,
+      "description": "Maximum unfinished monitoring runs in this single-process installation."
+    },
+    {
+      "name": "agent.monitoring.minimum-cadence",
+      "type": "java.time.Duration",
+      "defaultValue": "300s",
+      "description": "Minimum interval between monitoring checks; validated cron gaps and dispatch admission enforce it."
+    },
+    {
+      "name": "agent.monitoring.tool-calls",
+      "type": "java.lang.Integer",
+      "defaultValue": 20,
+      "description": "Maximum accepted tool calls per monitoring run, further reduced by ordinary agent limits."
+    },
+    {
+      "name": "agent.monitoring.results",
+      "type": "java.lang.Integer",
+      "defaultValue": 50,
+      "description": "Maximum observations and candidate updates in one structured monitoring result."
+    },
+    {
+      "name": "agent.monitoring.run-duration",
+      "type": "java.time.Duration",
+      "defaultValue": "5m",
+      "description": "Monitoring run active-time budget and reconciliation wall-clock deadline."
+    },
+    {
+      "name": "agent.monitoring.total-tokens",
+      "type": "java.lang.Long",
+      "defaultValue": 50000,
+      "description": "Maximum inference tokens per monitoring run, capped by ordinary agent limits."
+    },
+    {
+      "name": "agent.monitoring.output-reserve",
+      "type": "java.lang.Long",
+      "defaultValue": 16000,
+      "description": "Output tokens one monitoring model request may generate and reserves against the run's token budget, never above the pinned profile's maximum output. Sizes the reserve kept for the final report."
+    },
+    {
+      "name": "agent.monitoring.model-turns",
+      "type": "java.lang.Integer",
+      "defaultValue": 20,
+      "description": "Maximum model turns per monitoring check."
+    },
+    {
+      "name": "agent.monitoring.notification-chars",
+      "type": "java.lang.Integer",
+      "defaultValue": 12000,
+      "description": "Maximum notification UTF-16 characters, minimum 1000. Digests include complete queued entries only."
+    },
+    {
+      "name": "agent.monitoring.retention",
+      "type": "java.time.Duration",
+      "defaultValue": "90d",
+      "description": "Age threshold for pruning settled monitoring history. Current item evidence and unresolved work remain pinned."
+    },
+    {
+      "name": "agent.monitoring.retained-runs",
+      "type": "java.lang.Integer",
+      "defaultValue": 100,
+      "description": "Minimum recent monitoring runs and maximum settled embedded schedule occurrences to retain, minimum 1."
+    },
+    {
+      "name": "agent.portfolio.max-events",
+      "type": "java.lang.Integer",
+      "description": "Maximum append-only ledger events per portfolio, minimum 1. Refuse capacity overflow without pruning audit or receipts.",
+      "defaultValue": 1000
+    },
+    {
+      "name": "agent.portfolio.max-bson-bytes",
+      "type": "java.lang.Integer",
+      "description": "Maximum encoded BSON aggregate bytes including receipts, 1024 to 12000000; checked before an atomic write.",
+      "defaultValue": 8000000
+    },
+    {
+      "name": "agent.portfolio.quotes.provider",
+      "type": "java.lang.String",
+      "description": "Empty disables quotes; public selects Public US equity quotes, twelve-data selects Twelve Data. Fixed official endpoints only; no fallback. Ledger operations remain available.",
+      "defaultValue": ""
+    },
+    {
+      "name": "agent.portfolio.quotes.api-key",
+      "type": "java.lang.String",
+      "description": "Public API secret or Twelve Data API key from AGENT_PORTFOLIO_QUOTES_API_KEY; never exposed in browser, tools or safe status.",
+      "defaultValue": ""
+    },
+    {
+      "name": "agent.portfolio.quotes.account-id",
+      "type": "java.lang.String",
+      "description": "Public account ID from AGENT_PORTFOLIO_QUOTES_ACCOUNT_ID, required only for public. 1 to 128 ASCII letters, digits, underscores or hyphens. Not exposed in quote evidence or safe status.",
+      "defaultValue": ""
+    },
+    {
+      "name": "agent.portfolio.quotes.freshness",
+      "type": "java.time.Duration",
+      "description": "Maximum known source-price age, up to 7 days. Retrieval time never proves price freshness.",
+      "defaultValue": "36h"
+    },
+    {
+      "name": "agent.portfolio.quotes.connect-timeout",
+      "type": "java.time.Duration",
+      "description": "Standalone quote connection timeout, positive. Task connections inherit the remaining task deadline.",
+      "defaultValue": "3s"
+    },
+    {
+      "name": "agent.portfolio.quotes.request-timeout",
+      "type": "java.time.Duration",
+      "description": "Standalone per-symbol timeout including authentication, reference lookup and quote body. Task requests inherit the remaining task deadline.",
+      "defaultValue": "5s"
+    },
+    {
+      "name": "agent.portfolio.quotes.overall-timeout",
+      "type": "java.time.Duration",
+      "description": "Standalone quote batch deadline, positive. Task batches inherit the remaining task deadline and cancellation.",
+      "defaultValue": "20s"
+    },
+    {
+      "name": "agent.portfolio.quotes.max-symbols",
+      "type": "java.lang.Integer",
+      "description": "Maximum symbols in one valuation, minimum 1; Public uses at most three requests per symbol including authentication. Remaining positions report incomplete coverage. No hidden retries.",
+      "defaultValue": 8
+    },
+    {
+      "name": "agent.portfolio.quotes.max-response-bytes",
+      "type": "java.lang.Integer",
+      "description": "Maximum bytes per upstream response including token and instrument responses, minimum 1024.",
+      "defaultValue": 65536
+    },
+    {
+      "name": "agent.portfolio.quotes.instruments",
+      "type": "java.util.List<net.velocity.agent.portfolio.QuoteProperties$Instrument>",
+      "description": "Trusted listing catalog of unique symbol/exchange MIC/currency identities. No model-supplied network destinations.",
+      "defaultValue": []
+    },
+    {
+      "name": "agent.portfolio.quotes.instruments[].symbol",
+      "type": "java.lang.String",
+      "description": "Canonical listing ticker, up to 24 characters."
+    },
+    {
+      "name": "agent.portfolio.quotes.instruments[].exchange",
+      "type": "java.lang.String",
+      "description": "Four-character exchange MIC, checked against the provider response."
+    },
+    {
+      "name": "agent.portfolio.quotes.instruments[].currency",
+      "type": "java.lang.String",
+      "description": "Three-character ISO trade/quote currency; Public supports USD only. No FX conversion."
+    },
+    {
+      "name": "agent.portfolio.quotes.instruments[].quote-type",
+      "type": "java.lang.String",
+      "description": "Entitlement-specific unknown_delay, last_trade, delayed or end_of_day; configure only from provider entitlement evidence.",
+      "defaultValue": "unknown_delay"
+    },
+    {
+      "name": "agent.portfolio.quotes.instruments[].reconciliation-required",
+      "type": "java.lang.Boolean",
+      "description": "Flag a known split or corporate-action mismatch; suppress trusted gains until manually reconciled.",
+      "defaultValue": false
+    },
+    {
+      "name": "agent.portfolio.public-sync.enabled",
+      "type": "java.lang.Boolean",
+      "defaultValue": true,
+      "description": "Enable scoped Public account ingestion independently of quote selection."
+    },
+    {
+      "name": "agent.portfolio.public-sync.schedule-enabled",
+      "type": "java.lang.Boolean",
+      "defaultValue": true,
+      "description": "Enable typed Public ingestion through the existing JobRunr worker. Manual sync needs no worker."
+    },
+    {
+      "name": "agent.portfolio.public-sync.interval-minutes",
+      "type": "java.lang.Integer",
+      "defaultValue": 60,
+      "description": "Ingestion interval, minimum 5 minutes; missed intervals are skipped."
+    },
+    {
+      "name": "agent.portfolio.public-sync.initial-history-days",
+      "type": "java.lang.Integer",
+      "defaultValue": 90,
+      "description": "Initial account history range, minimum 1 day."
+    },
+    {
+      "name": "agent.portfolio.public-sync.overlap-days",
+      "type": "java.lang.Integer",
+      "defaultValue": 7,
+      "description": "Overlap before completed history coverage, minimum 1 day; older corrections require explicit backfill."
+    },
+    {
+      "name": "agent.portfolio.public-sync.max-positions",
+      "type": "java.lang.Integer",
+      "defaultValue": 500,
+      "description": "Maximum positions in one complete required response."
+    },
+    {
+      "name": "agent.portfolio.public-sync.max-lots",
+      "type": "java.lang.Integer",
+      "defaultValue": 5000,
+      "description": "Maximum imported tax lots per run."
+    },
+    {
+      "name": "agent.portfolio.public-sync.max-pages",
+      "type": "java.lang.Integer",
+      "defaultValue": 50,
+      "description": "Maximum history continuation pages per run."
+    },
+    {
+      "name": "agent.portfolio.public-sync.max-history-records",
+      "type": "java.lang.Integer",
+      "defaultValue": 5000,
+      "description": "Maximum retained history observations including revisions."
+    },
+    {
+      "name": "agent.portfolio.public-sync.max-snapshot-bytes",
+      "type": "java.lang.Integer",
+      "defaultValue": 8000000,
+      "description": "Maximum immutable snapshot or mutable connection document size."
+    },
+    {
+      "name": "agent.portfolio.public-sync.max-run-seconds",
+      "type": "java.lang.Integer",
+      "defaultValue": 180,
+      "description": "Active ingestion deadline, minimum 5 seconds."
+    },
+    {
+      "name": "agent.portfolio.public-sync.retained-snapshots",
+      "type": "java.lang.Integer",
+      "defaultValue": 10,
+      "description": "Number of immutable published snapshots retained for pinned pagination."
+    },
+    {
+      "name": "agent.portfolio.public-sync.retained-runs",
+      "type": "java.lang.Integer",
+      "defaultValue": 1000,
+      "description": "Bound on ordinary durable admission receipts; at capacity further admission fails rather than forgetting request keys. Typed scheduled receipts retain a rolling window."
+    },
+    {
+      "name": "agent.portfolio.public-sync.credentials",
+      "type": "java.util.Map<java.lang.String,java.lang.String>",
+      "description": "Trusted credential references mapped to Public API secrets. Never exposed through status or request input."
+    },
+    {
+      "name": "agent.portfolio.public-sync.connections",
+      "type": "java.util.List<net.velocity.agent.portfolio.broker.PublicBrokerProperties$Connection>",
+      "description": "Configured alias, credential-ref, permitted brokerage account-id and the required owner-account-id."
+    },
+    {
+      "name": "agent.portfolio.public-sync.connections[].owner-account-id",
+      "type": "java.lang.String",
+      "description": "Required registered Velocity account UUID owning this connection. Distinct from the external brokerage account-id; no local fallback."
+    },
+    {
+      "description": "Operator-assigned version of the explicit USD price catalog. Application defaults combine manually verified public prices dated 2026-10-02 (GPT-6 Luna) and 2026-10-16 (Claude) with operator-chosen zero rates for the exact local Qwen model. Each request pins the catalog; changes never reprice prior requests.",
+      "defaultValue": "published-2026-10-16-local-zero",
+      "type": "java.lang.String",
+      "name": "usage.pricing-version"
+    },
+    {
+      "description": "At most 256 explicit provider/model prices. Application defaults cover GPT-6 Luna, Claude Haiku 4.5 and Claude Haiku 5.5 using dated public Standard rates, plus operator-chosen zero rates for llama-cpp/qwen-local (the llama-server response alias); local zero rates are an accounting choice, not a vendor-published price. No automatic fetching. Exact response model IDs; other unconfigured models, including local models, remain unpriced. Override as a complete list.",
+      "type": "java.util.List<net.velocity.usage.UsageProperties$Price>",
+      "name": "usage.prices"
+    },
+    {
+      "description": "Explicit pricing provider: openai, claude, or llama-cpp. Does not select inference routing.",
+      "type": "java.lang.String",
+      "name": "usage.prices[].provider"
+    },
+    {
+      "description": "Exact actual provider response model ID. Missing prices remain unknown, including local inference.",
+      "type": "java.lang.String",
+      "name": "usage.prices[].model"
+    },
+    {
+      "description": "Required nonnegative USD estimate per million ordinary input tokens, excluding cached input.",
+      "type": "java.math.BigDecimal",
+      "name": "usage.prices[].input-per-million"
+    },
+    {
+      "description": "Required nonnegative USD estimate per million output tokens, including reasoning already present in output totals.",
+      "type": "java.math.BigDecimal",
+      "name": "usage.prices[].output-per-million"
+    },
+    {
+      "description": "Optional USD estimate per million cache-read input tokens; absent positive cache usage is explicitly unpriced.",
+      "type": "java.math.BigDecimal",
+      "name": "usage.prices[].cache-read-per-million"
+    },
+    {
+      "description": "Optional USD estimate per million cache-creation tokens without a reported duration. Does not substitute for five-minute or one-hour rates.",
+      "type": "java.math.BigDecimal",
+      "name": "usage.prices[].cache-creation-per-million"
+    },
+    {
+      "description": "Optional USD estimate per million five-minute cache-creation tokens.",
+      "type": "java.math.BigDecimal",
+      "name": "usage.prices[].cache-creation5m-per-million"
+    },
+    {
+      "description": "Optional USD estimate per million one-hour cache-creation tokens.",
+      "type": "java.math.BigDecimal",
+      "name": "usage.prices[].cache-creation1h-per-million"
+    },
+    {
+      "description": "Optional long-context pricing rule. A request strictly above its input-token threshold uses multiplied rates for the entire request; the rule is pinned with its catalog.",
+      "type": "net.velocity.usage.UsageProperties$LongContext",
+      "name": "usage.prices[].long-context"
+    },
+    {
+      "description": "Positive normalized input-token threshold, including cache tokens. Multipliers apply only when input tokens strictly exceed this value.",
+      "type": "java.lang.Long",
+      "name": "usage.prices[].long-context.input-token-threshold"
+    },
+    {
+      "description": "Positive decimal multiplier for ordinary input and every configured cache rate above the threshold, applied to all input tokens in that request.",
+      "type": "java.math.BigDecimal",
+      "name": "usage.prices[].long-context.input-multiplier"
+    },
+    {
+      "description": "Positive decimal multiplier for all output tokens, including reasoning, when the input-token threshold is exceeded.",
+      "type": "java.math.BigDecimal",
+      "name": "usage.prices[].long-context.output-multiplier"
+    },
+    {
+      "name": "inference.claude.prompt-caching",
+      "type": "java.lang.Boolean",
+      "defaultValue": true,
+      "description": "Mark the system prompt, the tool definitions and the latest conversation turn as ephemeral cache breakpoints on every Claude request so the stable prefix of an agent loop is read from the provider's prompt cache. Applies to the default Claude profile and the Claude cloud continuation."
+    },
+    {
+      "name": "opportunities.pipeline.max-notes",
+      "type": "java.lang.Integer",
+      "defaultValue": 50,
+      "description": "Notes retained per tracked opportunity (1 to 500)."
+    },
+    {
+      "name": "opportunities.pipeline.max-note-chars",
+      "type": "java.lang.Integer",
+      "defaultValue": 4000,
+      "description": "Characters per pipeline note (10 to 20000)."
+    },
+    {
+      "name": "opportunities.pipeline.max-profile-chars",
+      "type": "java.lang.Integer",
+      "defaultValue": 20000,
+      "description": "Characters of the saved company capability statement that fit assessments read (100 to 100000)."
+    },
+    {
+      "name": "opportunities.pipeline.reminder-default-days",
+      "type": "java.lang.Integer",
+      "defaultValue": 3,
+      "description": "Days before the response deadline at which a reminder task runs when no count is given (1 to 60)."
+    },
+    {
+      "name": "web-search.enabled",
+      "type": "java.lang.Boolean",
+      "defaultValue": true,
+      "description": "Register the web_search tool backed by the configured search provider. Enabling it without an API key fails startup."
+    },
+    {
+      "name": "web-search.provider",
+      "type": "java.lang.String",
+      "defaultValue": "tavily",
+      "description": "Search provider; tavily is the only supported value."
+    },
+    {
+      "name": "web-search.api-key",
+      "type": "java.lang.String",
+      "defaultValue": "",
+      "description": "Tavily API key, sent only as a bearer header to the configured base URL. Supply it through the ignored .env or the process environment."
+    },
+    {
+      "name": "web-search.base-url",
+      "type": "java.lang.String",
+      "defaultValue": "https://api.tavily.com",
+      "description": "HTTPS origin of the Tavily Search API without a trailing slash."
+    },
+    {
+      "name": "web-search.max-content-chars",
+      "type": "java.lang.Integer",
+      "defaultValue": 2000,
+      "description": "Characters of each result excerpt placed in the tool result (200 to 8000)."
+    },
+    {
+      "name": "web-search.max-results",
+      "type": "java.lang.Integer",
+      "defaultValue": 5,
+      "description": "Results returned when the model does not ask for a count (1 to 10)."
+    },
+    {
+      "name": "web-search.request-timeout",
+      "type": "java.time.Duration",
+      "defaultValue": "20s",
+      "description": "Upper bound for one search request, further capped by the task's remaining time."
+    },
+    {
+      "name": "web-search.search-depth",
+      "type": "java.lang.String",
+      "defaultValue": "basic",
+      "description": "Tavily search depth: basic (one credit) or advanced (two credits, more relevant excerpts)."
+    },
+    {
+      "name": "mcp.enabled",
+      "type": "java.lang.Boolean",
+      "defaultValue": false,
+      "description": "Connect to the configured Model Context Protocol servers at startup and register their tools as mcp_<server>_<tool>. Enabling it without an mcp.servers entry fails startup; an unreachable server is reported in status instead."
+    },
+    {
+      "name": "mcp.connect-timeout",
+      "type": "java.time.Duration",
+      "defaultValue": "30s",
+      "description": "Upper bound for starting or reaching one server and completing MCP initialization during startup discovery and later reconnects (1s to 10m)."
+    },
+    {
+      "name": "mcp.request-timeout",
+      "type": "java.time.Duration",
+      "defaultValue": "60s",
+      "description": "Upper bound for one tool call to an MCP server, further capped by the task's remaining time (1s to 10m). A server entry may override it with mcp.servers[n].request-timeout."
+    },
+    {
+      "name": "mcp.max-result-chars",
+      "type": "java.lang.Integer",
+      "defaultValue": 100000,
+      "description": "Characters of text an MCP tool result may carry into the task before it is truncated (1000 to 1000000). A server entry may override it with mcp.servers[n].max-result-chars; a response several times larger fails the call."
+    },
+    {
+      "name": "mcp.confirm-writes",
+      "type": "java.lang.Boolean",
+      "defaultValue": true,
+      "description": "Hold every MCP tool that is not a read for the requester's approval, with a preview of the exact call, even while agent.approval is disabled. Unattended runs are never paused."
+    },
+    {
+      "name": "mcp.servers",
+      "type": "java.util.List<net.velocity.mcp.McpProperties$Server>",
+      "description": "Indexed list of MCP servers (mcp.servers[0].name, .transport (stdio or http), .command, .args, .directory, .environment.*, .url, .headers.*, .tools, .category, .request-timeout, .max-result-chars). Declared in .env or the environment; see docs/mcp.md."
+    },
+    {
+      "name": "agent.approval.enabled",
+      "type": "java.lang.Boolean",
+      "defaultValue": false,
+      "description": "Pause a task before dispatching a tool call that matches the approval categories or tool list until the operator approves or declines it. Monitoring runs and delegated children are denied such calls instead of waiting."
+    },
+    {
+      "name": "agent.approval.categories",
+      "type": "java.lang.String",
+      "defaultValue": "browser.interaction,system.execute,network.write",
+      "description": "Comma-separated tool categories whose calls require approval. Reads, questions and delegation never require approval."
+    },
+    {
+      "name": "agent.approval.tools",
+      "type": "java.lang.String",
+      "defaultValue": "",
+      "description": "Comma-separated tool names that always require approval, whatever their category."
+    },
+    {
+      "name": "agent.approval.exempt-tools",
+      "type": "java.lang.String",
+      "defaultValue": "",
+      "description": "Comma-separated tool names that never require approval even when their category matches."
+    },
+    {
+      "name": "agent.live-output.model-streaming",
+      "type": "java.lang.Boolean",
+      "defaultValue": true,
+      "description": "Stream each model turn on providers that support streaming so assistant text reaches the console live. False requests complete responses; saved task changes are still pushed over server-sent events."
+    },
+    {
+      "name": "example.enabled",
+      "type": "java.lang.Boolean",
+      "defaultValue": false,
+      "description": "Enable the example feature module's read-only example_echo tool. Only meaningful in a build packaged with -Pexample-feature; the default build does not contain the module."
+    }
+  ],
+  "hints": [
+    {
+      "name": "inference.provider",
+      "values": [
+        {
+          "value": "claude",
+          "description": "Anthropic Messages API. Uses ANTHROPIC_API_KEY."
+        },
+        {
+          "value": "openai",
+          "description": "OpenAI Responses API. Uses OPENAI_API_KEY."
+        },
+        {
+          "value": "llama-cpp",
+          "description": "llama-server's OpenAI-compatible Responses API."
+        }
+      ]
+    }
+  ]
+}

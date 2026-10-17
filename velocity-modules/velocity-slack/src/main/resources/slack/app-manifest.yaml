@@ -1,0 +1,86 @@
+display_information:
+  name: Velocity
+  description: Velocity
+  background_color: "#003cf0"
+features:
+  app_home:
+    home_tab_enabled: true
+    messages_tab_enabled: true
+    messages_tab_read_only_enabled: false
+  bot_user:
+    display_name: Velocity
+    always_online: true
+  agent_view:
+    agent_description: Ask Velocity for help with tasks and follow-up questions.
+    suggested_prompts: []
+oauth_config:
+  redirect_urls:
+    - https://ngrok-free.app/slack/oauth_redirect
+  scopes:
+    # Existing user scopes serve other app features. Socket Mode ingress and
+    # thread retrieval use SLACK_BOT_TOKEN, not a separate user token.
+    user:
+      - channels:history
+      - channels:read
+      - groups:history
+      - groups:read
+      - im:history
+      - mpim:history
+      - users:read
+      - search:read.public
+      - search:read.private
+      - search:read.mpim
+      - search:read.im
+      - search:read.files
+      - search:read.users
+      - chat:write
+      - canvases:read
+      - canvases:write
+      - users:read.email
+    bot:
+      # Reinstall the app after adding this scope for generated report uploads.
+      - files:write
+      # Reinstall the app after adding this scope so files attached to messages
+      # can be downloaded into the task.
+      - files:read
+      # conversations.replies uses the corresponding channels/groups/im/mpim
+      # history scope below. Keep the bot in every conversation it must read.
+      # See https://docs.slack.dev/reference/methods/conversations.replies/
+      - canvases:read
+      - app_mentions:read
+      - assistant:write
+      - channels:history
+      - chat:write
+      - groups:history
+      - im:history
+      - im:read
+      - groups:read
+      - mpim:read
+      - mpim:history
+      - im:write
+      - reactions:read
+      - reactions:write
+      - users:read
+      - canvases:write
+      - channels:join
+      - channels:manage
+      - channels:read
+      - channels:write.invites
+  pkce_enabled: false
+settings:
+  event_subscriptions:
+    request_url: https://ngrok-free.app/slack/events
+    bot_events:
+      - app_home_opened
+      - app_mention
+      - message.channels
+      - message.groups
+      - message.im
+  interactivity:
+    is_enabled: true
+    request_url: https://ngrok-free.app/slack/events
+  org_deploy_enabled: true
+  socket_mode_enabled: true
+  token_rotation_enabled: false
+  app_level_token_rotation_enabled: false
+  is_mcp_enabled: true

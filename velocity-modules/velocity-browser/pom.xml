@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>net.velocity</groupId>
+    <artifactId>velocity-parent</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <relativePath>../../pom.xml</relativePath>
+  </parent>
+  <artifactId>velocity-browser</artifactId>
+  <dependencies>
+    <dependency>
+      <groupId>net.velocity</groupId>
+      <artifactId>velocity-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>net.velocity</groupId>
+      <artifactId>velocity-platform</artifactId>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <executions>
+          <execution>
+            <!-- The browser feature adds no library of its own and must not depend on another feature's libraries. -->
+            <id>keep-other-feature-libraries-out-of-browser</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <bannedDependencies>
+                  <excludes>
+                    <exclude>com.slack.api</exclude>
+                    <exclude>org.glassfish.tyrus.bundles</exclude>
+                    <exclude>org.apache.poi</exclude>
+                    <exclude>org.apache.pdfbox</exclude>
+                  </excludes>
+                </bannedDependencies>
+              </rules>
+            </configuration>
+          </execution>
+          <execution>
+            <!-- A feature module depends on velocity-core (and any feature it declares), never on velocity-app or another feature. -->
+            <id>keep-feature-modules-independent</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <bannedDependencies>
+                  <excludes>
+                    <exclude>net.velocity:*</exclude>
+                  </excludes>
+                  <includes>
+                    <include>net.velocity:velocity-core</include>
+                    <include>net.velocity:velocity-platform</include>
+                  </includes>
+                </bannedDependencies>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>net.velocity</groupId>
+    <artifactId>velocity-parent</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <relativePath>../../pom.xml</relativePath>
+  </parent>
+  <artifactId>velocity-code-execution</artifactId>
+  <dependencies>
+    <!-- The Spring, MongoDB, Jackson and Servlet types this module uses all arrive through velocity-core's starters.
+         Declaring them again would only reorder velocity-app's classpath, so none is repeated here. -->
+    <dependency>
+      <groupId>net.velocity</groupId>
+      <artifactId>velocity-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>net.velocity</groupId>
+      <artifactId>velocity-platform</artifactId>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <executions>
+          <execution>
+            <!-- Code execution talks to Docker through the CLI; it needs no other feature's library. -->
+            <id>keep-feature-libraries-out-of-code-execution</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <bannedDependencies>
+                  <excludes>
+                    <exclude>org.apache.poi</exclude>
+                    <exclude>org.apache.pdfbox</exclude>
+                    <exclude>com.slack.api</exclude>
+                  </excludes>
+                </bannedDependencies>
+              </rules>
+            </configuration>
+          </execution>
+          <execution>
+            <!-- A feature module depends on velocity-core (and any feature it declares), never on velocity-app or another feature. -->
+            <id>keep-feature-modules-independent</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <bannedDependencies>
+                  <excludes>
+                    <exclude>net.velocity:*</exclude>
+                  </excludes>
+                  <includes>
+                    <include>net.velocity:velocity-core</include>
+                    <include>net.velocity:velocity-platform</include>
+                  </includes>
+                </bannedDependencies>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>

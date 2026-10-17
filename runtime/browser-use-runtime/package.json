@@ -1,0 +1,17 @@
+{
+  "name": "velocity-browser-use-runtime",
+  "version": "1.0.0",
+  "private": true,
+  "engines": {
+    "node": ">=22.12"
+  },
+  "dependencies": {
+    "playwright": "1.64.0-alpha-1790635538000"
+  },
+  "scripts": {
+    "format": "node ../../frontend/node_modules/prettier/bin/prettier.cjs --write \"*.{js,cjs}\" package.json",
+    "format:check": "node ../../frontend/node_modules/prettier/bin/prettier.cjs --check \"*.{js,cjs}\" package.json",
+    "install-browser": "playwright install chromium",
+    "install-browser-with-deps": "playwright install --with-deps chromium"
+  }
+}

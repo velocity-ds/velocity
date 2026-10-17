@@ -1,0 +1,2 @@
+# Formatting tools only; runtime dependencies stay in each runtime's locked manifest.
+ruff==0.16.10

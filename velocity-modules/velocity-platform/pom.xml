@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <!-- The platform layer: capabilities every installation gets (knowledge, memory, skills, learning, research,
+       scheduling, monitoring, secrets, task history, the operator console) built on the kernel in velocity-core through
+       the same extension points a feature module uses. See docs/architecture.md. -->
+  <parent>
+    <groupId>net.velocity</groupId>
+    <artifactId>velocity-parent</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <relativePath>../../pom.xml</relativePath>
+  </parent>
+  <artifactId>velocity-platform</artifactId>
+  <dependencies>
+    <dependency>
+      <groupId>net.velocity</groupId>
+      <artifactId>velocity-core</artifactId>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <executions>
+          <execution>
+            <!-- Heavy feature libraries belong to the feature that uses them, never to the platform. -->
+            <id>keep-feature-libraries-out-of-platform</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <bannedDependencies>
+                  <excludes>
+                    <exclude>org.apache.poi</exclude>
+                    <exclude>org.apache.pdfbox</exclude>
+                    <exclude>com.slack.api</exclude>
+                  </excludes>
+                </bannedDependencies>
+              </rules>
+            </configuration>
+          </execution>
+          <execution>
+            <!-- The platform depends on the kernel only, never on a feature module or on the application. -->
+            <id>keep-platform-on-kernel-only</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <bannedDependencies>
+                  <excludes>
+                    <exclude>net.velocity:*</exclude>
+                  </excludes>
+                  <includes>
+                    <include>net.velocity:velocity-core</include>
+                  </includes>
+                </bannedDependencies>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>
