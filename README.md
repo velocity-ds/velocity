@@ -71,7 +71,7 @@ The console acts as one configured account. To share it with your Slack user, re
 | [Web search](docs/web-search.md) | The Tavily-backed `web_search` tool. |
 | [MCP connector](docs/mcp.md) | External Model Context Protocol servers registered as `mcp_<server>_<tool>` tools. |
 | [Adding a feature](docs/adding-a-feature.md) | New module step by step, extension points, checklist. |
-| [Development](docs/development.md) | Build commands, formatting, verification policy. |
+| [Development](docs/development.md) | Build and test commands, formatting, verification policy. |
 | [Contributor instructions](AGENTS.md) | Repository rules and runtime constraints. |
 
 Each module also has a short `README.md` that points to its guide.
@@ -100,7 +100,8 @@ macOS / Linux:
 
 ```sh
 sh ./mvnw compile                    # compile + Java formatting/brace checks
-sh ./mvnw -Pfrontend clean verify    # full build with console and all format checks
+sh ./mvnw test                       # compile + unit tests for every module
+sh ./mvnw -Pfrontend clean verify    # full build with console, unit tests and all format checks
 java -jar velocity-modules/velocity-app/target/velocity-0.0.1-SNAPSHOT.jar
 ```
 
@@ -108,11 +109,13 @@ Windows (PowerShell):
 
 ```powershell
 .\mvnw.cmd compile                    # compile + Java formatting/brace checks
-.\mvnw.cmd -Pfrontend clean verify    # full build with console and all format checks
+.\mvnw.cmd test                       # compile + unit tests for every module
+.\mvnw.cmd -Pfrontend clean verify    # full build with console, unit tests and all format checks
 java -jar velocity-modules\velocity-app\target\velocity-0.0.1-SNAPSHOT.jar
 ```
 
-Automated tests are paused; see [development](docs/development.md#verification-policy).
+Unit tests live in each module's `src/test/java` and run offline; see
+[development](docs/development.md#verification-policy) for what they cover.
 Contributions are welcome: read [CONTRIBUTING.md](CONTRIBUTING.md) first.
 
 ## License

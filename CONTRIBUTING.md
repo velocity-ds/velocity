@@ -18,7 +18,7 @@ build, formatting and verification details are in [docs/development.md](docs/dev
 Run from the repository root with JDK 25 (Node.js 22.12+ when the console changes):
 
 ```sh
-sh ./mvnw compile                      # Java compilation, Spotless and Checkstyle
+sh ./mvnw test                         # Java compilation, Spotless, Checkstyle and the unit tests
 npm ci --prefix frontend && npm run typecheck --prefix frontend && npm run format:check --prefix frontend
 sh ./mvnw -Pfrontend clean verify      # the full release build, before opening a pull request
 ```
@@ -26,10 +26,10 @@ sh ./mvnw -Pfrontend clean verify      # the full release build, before opening 
 On Windows use `.\mvnw.cmd`. `sh ./mvnw spotless:apply` and `npm run format --prefix frontend`
 fix layout; missing braces must be added by hand.
 
-Automated tests are paused in this repository (see
-[the verification policy](docs/development.md#verification-policy)); do not add test code
-until the maintainers reopen it. Describe in the pull request what you ran and what it does and
-does not establish.
+Add or update unit tests for the classes you change: offline JUnit 5 tests under the module's
+`src/test/java`, in the same package, with no Spring context, database, network or inference (see
+[the verification policy](docs/development.md#verification-policy)). Describe in the pull request
+what you ran, including the test totals, and what it does and does not establish.
 
 ## Pull requests
 

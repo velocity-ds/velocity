@@ -77,6 +77,15 @@
     </dependencies>
   </dependencyManagement>
 
+  <dependencies>
+    <dependency>
+      <!-- JUnit Jupiter, AssertJ and the Spring test utilities for every module's unit tests (src/test/java). -->
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
   <build>
     <plugins>
       <plugin>
@@ -127,6 +136,8 @@
         <configuration>
           <configLocation>${maven.multiModuleProjectDirectory}/config/checkstyle.xml</configLocation>
           <includeResources>false</includeResources>
+          <!-- Test sources follow the same brace rule as production code. -->
+          <includeTestSourceDirectory>true</includeTestSourceDirectory>
           <consoleOutput>true</consoleOutput>
         </configuration>
         <dependencies>

@@ -6,7 +6,7 @@ These instructions apply throughout the Velocity repository. Start with [README.
 
 Velocity uses Java 25, Spring Boot 4.1.1 MVC, Maven, MongoDB, JobRunr, and the Anthropic, OpenAI, and Slack Java SDKs. Dependency versions are defined in the parent [pom.xml](pom.xml) and the module POMs; use the Maven wrapper.
 
-The build is a Maven reactor whose modules live under `velocity-modules/`, in three layers. `velocity-core/` is the kernel (agent loop, execution state and persistence, inference, local operator boundary, and the extension contract in `agent/spi/`); `velocity-platform/` holds the installation-wide capabilities (knowledge, memory, skills, learning, research, scheduling, monitoring, secrets, task history, operator console) built on the kernel through `agent.spi`; the feature modules (`velocity-slack/`, `velocity-browser/`, `velocity-code-execution/`, `velocity-web-search/`, `velocity-mcp/`) hold one feature each; `velocity-example-feature/` is a compiled template for [adding a feature](docs/adding-a-feature.md), packaged only with `-Pexample-feature`; `velocity-app/` holds `VelocityApplication`, `web/` and the resources. A feature module depends on `velocity-core`, on `velocity-platform` only when it uses a platform capability, and on any module it declares: each carries a `keep-feature-modules-independent` Maven Enforcer rule that rejects any other `net.velocity` dependency. `velocity-platform` depends on `velocity-core` only, and `velocity-core` must not depend on any other `net.velocity` module (Enforcer rules reject both), so a kernel class cannot import a platform or feature package. Production Java code lives under `velocity-modules/<module>/src/main/java/net/velocity/`:
+The build is a Maven reactor whose modules live under `velocity-modules/`, in three layers. `velocity-core/` is the kernel (agent loop, execution state and persistence, inference, local operator boundary, and the extension contract in `agent/spi/`); `velocity-platform/` holds the installation-wide capabilities (knowledge, memory, skills, learning, research, scheduling, monitoring, secrets, task history, operator console) built on the kernel through `agent.spi`; the feature modules (`velocity-slack/`, `velocity-browser/`, `velocity-code-execution/`, `velocity-web-search/`, `velocity-mcp/`) hold one feature each; `velocity-example-feature/` is a compiled template for [adding a feature](docs/adding-a-feature.md), packaged only with `-Pexample-feature`; `velocity-app/` holds `VelocityApplication`, `web/` and the resources. A feature module depends on `velocity-core`, on `velocity-platform` only when it uses a platform capability, and on any module it declares: each carries a `keep-feature-modules-independent` Maven Enforcer rule that rejects any other `net.velocity` dependency. `velocity-platform` depends on `velocity-core` only, and `velocity-core` must not depend on any other `net.velocity` module (Enforcer rules reject both), so a kernel class cannot import a platform or feature package. Production Java code lives under `velocity-modules/<module>/src/main/java/net/velocity/`, and each module's unit tests under `velocity-modules/<module>/src/test/java/net/velocity/` in the same packages:
 
 - `agent/`: `AgentGateway` owns task admission, control and recovery, with `RootQueue` (the durable FIFO and workers) and `ExecutionAuthority` (trusted verifiers); `ConversationRunner` owns model turns and conversation progression, deciding each loop iteration through the ordered `RunPhase` enum, with `ContextPreparer` sizing each request; `ToolCallExecutor` owns accepted tool execution, with `CallSettlement` (receipt-before-settlement) and `ToolCallRecovery` (interrupted calls). `agent/spi/` is the contract platform and feature modules implement. `BudgetPolicy` carries the stopping rules, chosen per execution by `ExecutionProgress`: `DeadlineOnlyPolicy` (active time plus the task token ceiling) for ordinary tasks and `CumulativeLimitsPolicy` for monitoring. Subpackages separate state (`ExecutionSnapshot` format 5 with the nested `inference` and `partialReporting` records), HTTP, persistence, delivery, knowledge, scheduling (`JobRunrQueue` is the shared JobRunr plumbing), history, configuration, and tools. Features contribute tools, guidance, routes and status through the small extension types listed in [Wiring contributions](docs/agent-gateway.md#wiring-contributions).
 - `inference/`: shared contracts, `InferenceService`, `SystemPrompts`, and provider adapters. OpenAI and llama.cpp share the `responses/` transport and mapping code; Claude has its own mapper.
@@ -78,9 +78,9 @@ Consult [application.properties](velocity-modules/velocity-app/src/main/resource
 
 ## Build and verification
 
-Automated tests are paused by the maintainers while LLM inference availability is limited. For future code changes, do not write, restore, or generate test cases, test fixtures, test harnesses, or test-only dependencies, including offline unit, integration, browser, and evaluation tests. Resume test development only when the maintainers explicitly ask after inference is available again.
+Every module carries JUnit 5 unit tests under `src/test/java`, in the same package as the class under test, written with JUnit Jupiter and AssertJ from `spring-boot-starter-test` (declared once, test-scoped, in the parent POM). A unit test exercises one class or a small cluster through its public or package-private API: it starts no Spring context, opens no MongoDB connection, makes no network call and performs no inference, so `sh ./mvnw test` runs offline in seconds. Use hand-written fakes for the small SPI interfaces (`InferenceProvider`, `ReservedDestinationPolicy`, `OperatorRouteContributor`), Spring's servlet mocks for filters and controllers, `Clock.fixed` for time, and synthetic data only; never a real credential, token or database. Integration, browser and evaluation tests remain out of scope until the maintainers ask for them.
 
-Use source review, compilation, type checking, formatting checks, and packaging to validate changes during this pause. These checks do not establish runtime behavior or automated regression coverage. Do not run live inference calls or Slack posts for ordinary verification.
+When changing behavior, add or update the unit tests for the classes you touch, and keep expectations on the observable contract (decisions, messages, normalized values, persisted shapes) rather than on private structure. Test sources follow the same Spotless and Checkstyle rules as production code. Do not run live inference calls or Slack posts for ordinary verification.
 
 Run commands from the repository root with JDK 25. Invoke the checked-in non-executable Unix wrapper using `sh`; on Windows use `.\mvnw.cmd`.
 
@@ -88,17 +88,24 @@ Run commands from the repository root with JDK 25. Invoke the checked-in non-exe
 # Compile the backend and check Java formatting and braces.
 sh ./mvnw compile
 
+# Compile and run every module's unit tests (includes the formatting and brace checks).
+sh ./mvnw test
+
+# Run one module's tests, or one test class.
+sh ./mvnw -pl velocity-modules/velocity-core test
+sh ./mvnw -pl velocity-modules/velocity-core test -Dtest=JsonSchemaTest
+
 # Check frontend types and formatting.
 npm ci --prefix frontend
 npm run typecheck --prefix frontend
 npm run format:check --prefix frontend
 
-# Build the UI and executable JAR and run formatting verification. The release JAR
-# needs -Pfrontend; the default build does not run npm or include the console assets.
+# Build the UI and executable JAR, run the unit tests and the formatting verification. The release
+# JAR needs -Pfrontend; the default build does not run npm or include the console assets.
 sh ./mvnw -Pfrontend clean verify
 ```
 
-For documentation-only changes, verify commands and configuration examples against the source, check relative links, and run `git diff --check`; an application build is unnecessary. Before finishing, review the diff and report what changed, which non-test checks were completed, and any material limitations. Do not report a successful build as passing tests.
+For documentation-only changes, verify commands and configuration examples against the source, check relative links, and run `git diff --check`; an application build is unnecessary. Before finishing, review the diff and report what changed, which checks were completed (with the test totals), and any material limitations. Passing unit tests do not establish behavior against real providers, Slack or MongoDB; say so when that matters.
 
 ## Area-specific references
 

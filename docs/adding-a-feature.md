@@ -6,8 +6,10 @@ A feature is its own Maven module that plugs into the small extension points in 
 rename it and replace its tool. Every full reactor build compiles it, so an extension-point
 change that breaks the template fails the build.
 
-Automated tests are paused (see [development](development.md#verification-policy)); do not add
-tests, fixtures or harnesses for a new feature.
+A feature brings its own unit tests under `src/test/java` (see the
+[verification policy](development.md#verification-policy)): offline JUnit 5 tests of its tool
+metadata, schemas, parsers and handlers, with no Spring context, database, network or inference.
+The template's `ExampleToolsTest` shows the shape.
 
 - [When to create a module](#when-to-create-a-module)
 - [Files a feature touches](#files-a-feature-touches)
@@ -55,6 +57,7 @@ them.
 | Tool class building `ToolRegistry.Definition` values | if it has tools |
 | `<Feature>Prompts` | if it has prompts |
 | `@RestController` under `/api/operator/<feature>` | if it has an API |
+| Unit tests under `src/test/java/net/velocity/<feature>` (copy [ExampleToolsTest](../velocity-modules/velocity-example-feature/src/test/java/net/velocity/example/ExampleToolsTest.java)) | always |
 | `docs/<feature>.md`, a row in the [README](../README.md#documentation), rows in the [order tables](agent-gateway.md#wiring-contributions), a module `README.md` | always |
 | Frontend page under `frontend/src` | if the console shows it |
 
@@ -142,7 +145,8 @@ them:
 
 ## Verifying
 
-1. `sh ./mvnw spotless:apply`, add missing braces, then `sh ./mvnw compile`.
+1. `sh ./mvnw spotless:apply`, add missing braces, then `sh ./mvnw test` (the module's unit tests
+   run with everything else; `sh ./mvnw -pl velocity-modules/velocity-<feature> test` runs them alone).
 2. `git diff --stat <base> -- velocity-core velocity-platform` is empty and
    `grep -rniE "<feature>|<tool_prefix>" velocity-modules/velocity-core/src velocity-modules/velocity-platform/src` finds nothing.
 3. `sh ./mvnw clean package` and check `jar tf velocity-modules/velocity-app/target/velocity-0.0.1-SNAPSHOT.jar` for
@@ -154,7 +158,8 @@ them:
    `accounts` collection into the disposable database if you need to submit a task, and drop only
    that database afterwards.
 
-None of this proves runtime behavior; say so in the change description.
+Unit tests and builds do not prove behavior against the live application; say so in the change
+description.
 
 ## Reviewer checklist
 
@@ -173,4 +178,5 @@ None of this proves runtime behavior; say so in the change description.
 - [ ] Prompts in `<Feature>Prompts`; released tool text unchanged.
 - [ ] Permanent names chosen deliberately.
 - [ ] Docs, README table, order tables and module README updated; links resolve.
-- [ ] Build and formatting results reported, with a statement that tests are paused.
+- [ ] Unit tests under `src/test/java` cover the tools' metadata, schemas and parsing; build, test
+      and formatting results reported.
